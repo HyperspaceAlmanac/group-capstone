@@ -38,7 +38,7 @@ namespace CarRentalService.Controllers
         public async Task<IActionResult> Details()
         {
             var userId =  this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
             return View(customer);
         }
 
@@ -70,7 +70,7 @@ namespace CarRentalService.Controllers
         public async Task<IActionResult> Edit()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
             return View(customer);
         }
 
