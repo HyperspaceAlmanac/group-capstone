@@ -18,6 +18,7 @@ namespace CarRentalService.Models
         public string PhoneNumber { get; set; }
         public string DriverLicenseNumber { get; set; }
         public int TotalBalance { get; set; }
+        public bool CompletedRegistration { get; set; }
         [ForeignKey("IdentityUser")]
         public string IdentityUserId { get; set; }
         public IdentityUser IdentityUser { get; set; }

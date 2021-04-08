@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using CarRentalService.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -114,7 +115,20 @@ namespace CarRentalService.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        if (Input.Role == "Customer")
+                        {
+                            Customer customer = new Customer { IdentityUserId = user.Id, CompletedRegistration = false };
+                            return RedirectToAction("RegisterAccount", "Customer", customer);
+                        }
+                        else if (Input.Role == "Employee")
+                        {
+
+                            Employee employee = new Employee { IdentityUserId = user.Id, CompletedRegistration = false };
+                            return RedirectToAction("RegisterAccount", "Employee", employee);
+                        } else
+                        {
+                            return LocalRedirect(returnUrl);
+                        }
                     }
                 }
                 foreach (var error in result.Errors)

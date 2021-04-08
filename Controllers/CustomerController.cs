@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CarRentalService.Data;
 using CarRentalService.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace CarRentalService.Controllers
 {
@@ -23,26 +24,21 @@ namespace CarRentalService.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            if (!customer.CompletedRegistration)
+            {
+                return RedirectToAction(nameof(Edit));
+            }
             var applicationDbContext = _context.Customers.Include(c => c.IdentityUser);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Customers/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customer = await _context.Customers
-                .Include(c => c.IdentityUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
+            var userId =  this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
             return View(customer);
         }
 
@@ -71,19 +67,10 @@ namespace CarRentalService.Controllers
         }
 
         // GET: Customers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-            ViewData["IdentityUserId"] = new SelectList(_context.Users, "Id", "Id", customer.IdentityUserId);
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
             return View(customer);
         }
 
@@ -156,6 +143,13 @@ namespace CarRentalService.Controllers
         private bool CustomerExists(int id)
         {
             return _context.Customers.Any(e => e.Id == id);
+        }
+
+        public ActionResult RegisterAccount(Models.Customer customer)
+        {
+            _context.Customers.Add(customer);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

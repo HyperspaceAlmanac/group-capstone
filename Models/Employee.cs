@@ -16,6 +16,7 @@ namespace CarRentalService.Models
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
         public int Zipcode { get; set; }
+        public bool CompletedRegistration { get; set; }
         [ForeignKey("IdentityUser")]
         public string IdentityUserId { get; set; }
         public IdentityUser IdentityUser { get; set; }
