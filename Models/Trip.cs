@@ -26,8 +26,8 @@ namespace CarRentalService.Models
         [ForeignKey(nameof(Vehicle))]
         public int VehicleId { get; set; }
         public Vehicle Vehicle { get; set; }
-        [ForeignKey(nameof(Driver))]
-        public int DriverId { get; set; }
-        public Driver Driver { get; set; }
+        [ForeignKey(nameof(Customer))]
+        public int CustomerId { get; set; }
+        public Customer Customer { get; set; }
     }
 }

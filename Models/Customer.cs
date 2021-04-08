@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CarRentalService.Models
 {
-    public class Driver
+    public class Customer
     {
         [Key]
         public int Id { get; set; }
@@ -16,5 +18,8 @@ namespace CarRentalService.Models
         public string PhoneNumber { get; set; }
         public string DriverLicenseNumber { get; set; }
         public int TotalBalance { get; set; }
+        [ForeignKey("IdentityUser")]
+        public string IdentityUserId { get; set; }
+        public IdentityUser IdentityUser { get; set; }
     }
 }
