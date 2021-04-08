@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CarRentalService.Models;
 
 namespace CarRentalService.Data
 {
@@ -44,5 +45,14 @@ namespace CarRentalService.Data
                     }
                 );
         }
+
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
+
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Issue> Issues { get; set; }
+        public DbSet<ServiceReceipt> ServiceReceipt { get; set; }
+        public DbSet<Trip> Trips { get; set; }
+
     }
 }
