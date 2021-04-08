@@ -350,4 +350,4 @@ MigrationBackup/
 .ionide/
 
 # Secrets folder to hold API keys
-Secrets/
+Secrets.cs
