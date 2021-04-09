@@ -30,9 +30,32 @@ namespace CarRentalService.Controllers
             {
                 return RedirectToAction(nameof(Edit));
             }
+            else
+            {
+                return RedirectToAction(nameof(Details));
+            }
             var applicationDbContext = _context.Customers.Include(c => c.IdentityUser);
             return View(await applicationDbContext.ToListAsync());
         }
+
+
+        // GET: Customers/Details/5
+        public async Task<IActionResult> TripPage()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+
+            //  
+            //
+            //
+            // Check if on a trip
+            var onTrip = _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefault();
+
+            return View(customer);
+        }
+
+        // GET
+
 
         // GET: Customers/Details/5
         public async Task<IActionResult> Details()
@@ -54,7 +77,7 @@ namespace CarRentalService.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Address,PhoneNumber,DriverLicenseNumber,TotalBalance,IdentityUserId")] Customer customer)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Address,PhoneNumber,DriverLicenseNumber,CompletedRegistration,TotalBalance,IdentityUserId")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -79,7 +102,7 @@ namespace CarRentalService.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Address,PhoneNumber,DriverLicenseNumber,TotalBalance,IdentityUserId")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Address,PhoneNumber,DriverLicenseNumber,CompletedRegistration,TotalBalance,IdentityUserId")] Customer customer)
         {
             if (id != customer.Id)
             {
@@ -90,6 +113,7 @@ namespace CarRentalService.Controllers
             {
                 try
                 {
+                    customer.CompletedRegistration = true;
                     _context.Update(customer);
                     await _context.SaveChangesAsync();
                 }
@@ -108,6 +132,13 @@ namespace CarRentalService.Controllers
             }
             ViewData["IdentityUserId"] = new SelectList(_context.Users, "Id", "Id", customer.IdentityUserId);
             return View(customer);
+        }
+
+        public async Task<IActionResult> RegisterAccount(Customer customer)
+        {
+            _context.Add(customer);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Customers/Delete/5
@@ -143,13 +174,6 @@ namespace CarRentalService.Controllers
         private bool CustomerExists(int id)
         {
             return _context.Customers.Any(e => e.Id == id);
-        }
-
-        public ActionResult RegisterAccount(Models.Customer customer)
-        {
-            _context.Customers.Add(customer);
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
         }
     }
 }
