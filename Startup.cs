@@ -1,5 +1,4 @@
 using CarRentalService.Data;
-using CarRentalService.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +41,6 @@ namespace CarRentalService
                 .AddDefaultTokenProviders();
             services.AddScoped<ClaimsPrincipal>(s =>
                 s.GetService<IHttpContextAccessor>().HttpContext.User);
-            services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
             services.AddControllers(config =>
             {
                 config.Filters.Add(typeof(GlobalRouting));
