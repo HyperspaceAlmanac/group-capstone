@@ -17,11 +17,24 @@ namespace CarRentalService.Models
         public double EndLat { get; set; }
         public int OdometerStart { get; set; }
         public int OdometerEnd { get; set; }
-        public int fuelStart { get; set; }
-        public int fuelEnd { get; set; }
+        public int FuelStart { get; set; }
+        public int FuelEnd { get; set; }
         public double Cost { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+        public string BeforeTripFrontImage { get; set; }
+        public string BeforeTripBackImage { get; set; }
+        public string BeforeTripLeftImage { get; set; }
+        public string BeforeTripRightImage { get; set; }
+        public string BeforeTripInteriorFront { get; set; }
+        public string BeforeTripInteriorBack { get; set; }
+
+        public string AfterTripFrontImage { get; set; }
+        public string AfterTripBackImage { get; set; }
+        public string AfterTripLeftImage { get; set; }
+        public string AfterTripRightImage { get; set; }
+        public string AfterTripInteriorFront { get; set; }
+        public string AfterTripInteriorBack { get; set; }
 
         [ForeignKey(nameof(Vehicle))]
         public int VehicleId { get; set; }

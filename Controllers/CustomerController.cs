@@ -32,12 +32,25 @@ namespace CarRentalService.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(Details));
+                var trip = await _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefaultAsync();
+                if (trip == null)
+                {
+                    RedirectToAction(nameof(SelectVehicle));
+                }
+                else
+                {
+                    RedirectToAction(nameof(TripPage));
+                }
             }
             var applicationDbContext = _context.Customers.Include(c => c.IdentityUser);
             return View(await applicationDbContext.ToListAsync());
         }
-
+        public async Task<ActionResult> SelectVehicle()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            return View();
+        }
 
         // GET: Customers/Details/5
         public async Task<IActionResult> TripPage()
@@ -45,13 +58,8 @@ namespace CarRentalService.Controllers
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
 
-            //  
-            //
-            //
-            // Check if on a trip
-            var onTrip = _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefault();
-
-            return View(customer);
+            return View();
+            
         }
 
         // GET
