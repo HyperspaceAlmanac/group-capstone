@@ -35,20 +35,21 @@ namespace CarRentalService.Controllers
                 var trip = await _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefaultAsync();
                 if (trip == null)
                 {
-                    RedirectToAction(nameof(SelectVehicle));
+                    return RedirectToAction(nameof(SelectVehicle));
                 }
                 else
                 {
-                    RedirectToAction(nameof(TripPage));
+                    return RedirectToAction(nameof(TripPage));
                 }
             }
-            var applicationDbContext = _context.Customers.Include(c => c.IdentityUser);
-            return View(await applicationDbContext.ToListAsync());
         }
         public async Task<ActionResult> SelectVehicle()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            // Display map,list of vehicles.
+            // Select a vehicle
+            // Select a End location to create a trip
             return View();
         }
 
@@ -57,9 +58,17 @@ namespace CarRentalService.Controllers
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            // Trip filled out. Start, end
+            var trip = await _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefaultAsync();
+            var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).SingleOrDefaultAsync();
 
             return View();
             
+        }
+
+        public bool PhotosUploaded(Vehicle vehicle)
+        {
+            return false;
         }
 
         // GET
