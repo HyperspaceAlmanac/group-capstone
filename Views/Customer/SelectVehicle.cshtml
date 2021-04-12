@@ -6,7 +6,7 @@
 
 <h1>SelectVehicle</h1>
 @foreach (Vehicle v in Model) {
-    <div>@v.Model <a class="btn btn-primary" asp-action="CreateTrip" asp-route-vehicleId=@v.Id asp-route-endPoint=@(new double[] { 37.7786049, -122.3927902 })>Start Trip</a></div>
+    <div>@v.Model <a class="btn btn-primary" asp-action="CreateTrip" asp-route-vehicleId=@v.Id asp-route-lng=37.7786049 asp-route-lat=-122.3927902 })>Start Trip</a></div>
     
 }
 

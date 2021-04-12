@@ -26,7 +26,7 @@ namespace CarRentalService.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
             if (!customer.CompletedRegistration)
             {
                 return RedirectToAction(nameof(Edit));
@@ -55,15 +55,58 @@ namespace CarRentalService.Controllers
             return View(vehicles);
         }
 
-        public async Task<ActionResult> CreateTrip(int vehicleID, double[] endPoint)
+        public async Task<ActionResult> CreateTrip(int vehicleID, double lng, double lat)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
             var vehicle = await _context.Vehicles.Where(v => v.Id == vehicleID).SingleOrDefaultAsync();
-            CreateTripVM viewModel = new CreateTripVM { Customer = customer, Vehicle = vehicle, EndCoordinates = endPoint};
+
+            Trip newTrip = PopulateTrip(customer, vehicle);
+            // Assuming that vehicle always has one trip where it is placed.
+            var prevTrip = await _context.Trips.Where(t => t.VehicleId == vehicle.Id).OrderBy(t => t.EndTime).LastOrDefaultAsync();
+            if (prevTrip != null)
+            {
+                GetPreviousImageURLs(newTrip, prevTrip);
+            }
+            // Estimated cost
+            newTrip.Cost = 10.50;
+            newTrip.EndLat = lat;
+            newTrip.EndLng = lng;
             // User will confirm car is in good condition (guaranteed to be)
             // User gets Twillo code
-            return View(viewModel);
+            return View(newTrip);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateTrip(Trip trip)
+        {
+            trip.StartTime = DateTime.Now;
+            _context.Trips.Add(trip);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        private Trip PopulateTrip(Customer customer, Vehicle vehicle)
+        {
+            Trip trip = new Trip {CustomerId = customer.Id, Customer = customer, VehicleId = vehicle.Id, Vehicle = vehicle, StartLng = vehicle.LastKnownLongitude.Value,
+                StartLat = vehicle.LastKnownLatitude.Value, OdometerStart = vehicle.Odometer, FuelStart = vehicle.Fuel};
+            return trip;
+        }
+
+        private void GetPreviousImageURLs(Trip current, Trip prev)
+        {
+            current.BeforeTripFrontImage = prev.AfterTripFrontImage;
+            current.BeforeTripBackImage = prev.AfterTripBackImage;
+            current.BeforeTripLeftImage = prev.AfterTripLeftImage;
+            current.BeforeTripRightImage = prev.AfterTripRightImage;
+            current.BeforeTripInteriorFront = prev.AfterTripInteriorFront;
+            current.BeforeTripInteriorBack = prev.AfterTripInteriorBack;
+            current.AfterTripFrontImage = "";
+            current.AfterTripBackImage = "";
+            current.AfterTripLeftImage = "";
+            current.AfterTripRightImage = "";
+            current.AfterTripInteriorFront = "";
+            current.AfterTripInteriorBack = "";
         }
 
         // GET: Customers/Details/5

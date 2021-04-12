@@ -11,5 +11,6 @@ namespace CarRentalService.ViewModels
         public Customer Customer { get; set; }
         public Vehicle Vehicle { get; set; }
         public double[] EndCoordinates { get; set; }
+        public string[] ImageURLs { get; set; }
     }
 }
