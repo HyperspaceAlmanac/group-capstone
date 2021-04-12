@@ -125,7 +125,7 @@
                             <label>Pay $@item.Cost Bill</label>
                         </article>
                         <input type="hidden" name="amount" value="@(item.Cost*100)" />>
-                        <input type="hidden" name="description" value="Trip @item.EndTime" />>
+                        <input type="hidden" name="description" value="Trip End Date @item.EndTime" />>
                         <input type="hidden" name="tripId" value="@item.Id" />>
                         <script src="//checkout.stripe.com/v2/checkout.js"
                                 class="stripe-button"

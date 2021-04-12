@@ -3,14 +3,18 @@
     {
         ViewData["Title"] = "Payment Successful!";
 
-        <h1>Payment Successful!</h1>
-        <p> @ViewBag.PaymentInfo</p>
+        <h1 style="color:green;">Payment Successful!</h1>
+        <ul>
+            <li>Amount Paid: $@(ViewBag.PaymentInfo.Amount/100) </li>
+            <li>Receipt Email: @ViewBag.PaymentInfo.ReceiptEmail  </li>
+            <li>Description: @ViewBag.PaymentInfo.Description </li>
+        </ul>
     }
     else
     {
         ViewData["Title"] = "Payment Failed";
         
-        <h1>Payment failed!</h1>
+        <h1 style="color:red;">Payment failed!</h1>
         <p> @ViewBag.Exception </p>
     }
 }
