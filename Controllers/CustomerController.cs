@@ -28,7 +28,6 @@ namespace CarRentalService.Controllers
             var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
             if (!customer.CompletedRegistration)
             {
-                
                 return RedirectToAction(nameof(Edit));
             }
             else
@@ -36,7 +35,6 @@ namespace CarRentalService.Controllers
                 var trip = await _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefaultAsync();
                 if (trip == null)
                 {
-                    // Waiting to select car and destination
                     return RedirectToAction(nameof(SelectVehicle));
                 }
                 else
