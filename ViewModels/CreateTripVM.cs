@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace CarRentalService.ViewModels
 {
-    public class TripViewModel
+    public class CreateTripVM
     {
         public Customer Customer { get; set; }
-        public Trip Trip { get; set; }
+        public Vehicle Vehicle { get; set; }
+        public double[] EndCoordinates { get; set; }
     }
 }

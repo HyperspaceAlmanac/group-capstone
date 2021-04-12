@@ -1,8 +1,12 @@
-﻿
+﻿@model IEnumerable<CarRentalService.Models.Vehicle>
 @{
     ViewData["Title"] = "SelectVehicle";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>SelectVehicle</h1>
+@foreach (Vehicle v in Model) {
+    <div>@v.Model <a class="btn btn-primary" asp-action="CreateTrip" asp-route-vehicleId=@v.Id asp-route-endPoint=@(new double[] { 37.7786049, -122.3927902 })>Start Trip</a></div>
+    
+}
 

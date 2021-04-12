@@ -9,6 +9,7 @@ using CarRentalService.Data;
 using CarRentalService.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using CarRentalService.ViewModels;
 
 namespace CarRentalService.Controllers
 {
@@ -50,17 +51,19 @@ namespace CarRentalService.Controllers
             // Display map,list of vehicles.
             // Select a vehicle
             // Select a End location to create a trip
-            return View();
+            List<Vehicle> vehicles = _context.Vehicles.ToList();
+            return View(vehicles);
         }
 
-        public async Task<ActionResult> CreateTrip(int vehicleID, int[] endPoint)
+        public async Task<ActionResult> CreateTrip(int vehicleID, double[] endPoint)
         {
-            // Set Vehicle.CustomerInspecting to this customerID. Come back to this page if needed
-            // User will confirm car is good
-            // If user cancels out, car is set to IsAvailable again
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            var vehicle = await _context.Vehicles.Where(v => v.Id == vehicleID).SingleOrDefaultAsync();
+            CreateTripVM viewModel = new CreateTripVM { Customer = customer, Vehicle = vehicle, EndCoordinates = endPoint};
+            // User will confirm car is in good condition (guaranteed to be)
             // User gets Twillo code
-            // User enters destination
-            return View();
+            return View(viewModel);
         }
 
         // GET: Customers/Details/5
