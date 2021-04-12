@@ -351,3 +351,6 @@ MigrationBackup/
 
 # Secrets folder to hold API keys
 Secrets.cs
+
+# Folder to hold images
+Images/
