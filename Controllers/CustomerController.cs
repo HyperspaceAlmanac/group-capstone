@@ -9,6 +9,8 @@ using CarRentalService.Data;
 using CarRentalService.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.Configuration;
+using Stripe;
 
 namespace CarRentalService.Controllers
 {
@@ -85,7 +87,7 @@ namespace CarRentalService.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Address,PhoneNumber,DriverLicenseNumber,CompletedRegistration,TotalBalance,IdentityUserId")] Customer customer)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Address,PhoneNumber,DriverLicenseNumber,CompletedRegistration,TotalBalance,IdentityUserId")] Models.Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -110,7 +112,7 @@ namespace CarRentalService.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Address,PhoneNumber,DriverLicenseNumber,CompletedRegistration,TotalBalance,IdentityUserId")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Address,PhoneNumber,DriverLicenseNumber,CompletedRegistration,TotalBalance,IdentityUserId")] Models.Customer customer)
         {
             if (id != customer.Id)
             {
@@ -142,7 +144,7 @@ namespace CarRentalService.Controllers
             return View(customer);
         }
 
-        public async Task<IActionResult> RegisterAccount(Customer customer)
+        public async Task<IActionResult> RegisterAccount(Models.Customer customer)
         {
             _context.Add(customer);
             await _context.SaveChangesAsync();
@@ -182,6 +184,37 @@ namespace CarRentalService.Controllers
         private bool CustomerExists(int id)
         {
             return _context.Customers.Any(e => e.Id == id);
+        }
+
+        public ActionResult TotalBill()
+        {
+            ViewBag.StripePublishKey = Secrets.STRIPES_PUBLIC_KEY;
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            List<Trip> customerTrips = _context.Trips.Where(t => t.CustomerId.Equals(customer.Id)).ToList();
+            return View(customerTrips);
+        }
+
+        [HttpPost]
+        public ActionResult Charge(string stripeToken, string stripeEmail, int amount, string description, int tripId)
+        {
+            StripeConfiguration.ApiKey = Secrets.STRIPES_API_KEY;
+            var myCharge = new ChargeCreateOptions();
+            myCharge.Amount = amount;
+            myCharge.Currency = "USD";
+            myCharge.ReceiptEmail = stripeEmail;
+            myCharge.Description = description;
+            myCharge.Source = stripeToken;
+            myCharge.Capture = true;
+            var chargeService = new ChargeService();
+            Charge stripeCharge = chargeService.Create(myCharge);
+            
+            Trip tripPaid = _context.Trips.Where(t => t.Id.Equals(tripId)).FirstOrDefault();
+            tripPaid.IsPaid = true;
+            _context.Update(tripPaid);
+            _context.SaveChanges();
+
+            return View(stripeCharge);
         }
     }
 }
