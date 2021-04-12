@@ -35,11 +35,19 @@ namespace CarRentalService.Controllers
                 var trip = await _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefaultAsync();
                 if (trip == null)
                 {
+                    // Waiting to select car and destination
                     return RedirectToAction(nameof(SelectVehicle));
                 }
                 else
                 {
-                    return RedirectToAction(nameof(TripPage));
+                    var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).FirstOrDefaultAsync();
+                    // Accepted terms, on a trip
+                    if (!vehicle.IsAvailable)
+                    {
+                        return RedirectToAction(nameof(TripPage));
+                    }
+                    // Not on a trip yet, waiting to check conditions and accept terms
+                    return RedirectToAction(nameof(SelectVehicle));
                 }
             }
         }
@@ -61,6 +69,9 @@ namespace CarRentalService.Controllers
             // Trip filled out. Start, end
             var trip = await _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefaultAsync();
             var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).SingleOrDefaultAsync();
+
+            // Trip start values:
+            // IsOperational = False. 
 
             return View();
             
