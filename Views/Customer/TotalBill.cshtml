@@ -2,12 +2,15 @@
 
 @{
     ViewData["Title"] = "TotalBill";
-    
+
     double totalBill = 0;
-    
+
     foreach (var item in Model)
     {
-        totalBill += item.Cost;
+        if (!item.IsPaid)
+        {
+            totalBill += item.Cost;
+        }
     };
 }
 
@@ -135,7 +138,7 @@
                 }
                 else
                 {
-                    <a><b>Already Paid</b></a>
+                    <a><b>Fully Paid</b></a>
                 }
             </td>
         </tr>

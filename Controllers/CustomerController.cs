@@ -191,6 +191,7 @@ namespace CarRentalService.Controllers
             ViewBag.StripePublishKey = Secrets.STRIPES_PUBLIC_KEY;
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+
             List<Trip> customerTrips = _context.Trips.Where(t => t.CustomerId.Equals(customer.Id)).ToList();
             return View(customerTrips);
         }
@@ -207,14 +208,37 @@ namespace CarRentalService.Controllers
             myCharge.Source = stripeToken;
             myCharge.Capture = true;
             var chargeService = new ChargeService();
-            Charge stripeCharge = chargeService.Create(myCharge);
-            
-            Trip tripPaid = _context.Trips.Where(t => t.Id.Equals(tripId)).FirstOrDefault();
-            tripPaid.IsPaid = true;
-            _context.Update(tripPaid);
-            _context.SaveChanges();
+            try
+            {
+                Charge stripeCharge = chargeService.Create(myCharge);
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
 
-            return View(stripeCharge);
+                if (tripId.Equals(-1))
+                {
+                    List<Trip> allTrips = _context.Trips.Where(t => t.CustomerId.Equals(customer.Id)).ToList();
+                    foreach (var trip in allTrips)
+                    {
+                        trip.IsPaid = true;
+                        _context.Update(trip);
+                    }
+                }
+                else
+                {
+                    Trip tripPaid = _context.Trips.Where(t => t.Id.Equals(tripId)).FirstOrDefault();
+                    tripPaid.IsPaid = true;
+                    _context.Update(tripPaid);
+                }
+                _context.SaveChanges();
+
+                ViewBag.PaymentInfo = myCharge;
+                return View(true);
+            }
+            catch (Exception exceptionThrown)
+            {
+                ViewBag.Exception = exceptionThrown;
+                return View(false);
+            }
         }
     }
 }
