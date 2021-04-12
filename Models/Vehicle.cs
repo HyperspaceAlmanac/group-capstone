@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,6 +18,6 @@ namespace CarRentalService.Models
         public double? LastKnownLongitude { get; set; }
         public bool IsAvailable { get; set; }
         public bool IsOperational { get; set; }
-
+        public int CustomerInspectingId { get; set; }
     }
 }

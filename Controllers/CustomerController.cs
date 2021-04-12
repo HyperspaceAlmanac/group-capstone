@@ -28,6 +28,7 @@ namespace CarRentalService.Controllers
             var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
             if (!customer.CompletedRegistration)
             {
+                
                 return RedirectToAction(nameof(Edit));
             }
             else
@@ -40,14 +41,7 @@ namespace CarRentalService.Controllers
                 }
                 else
                 {
-                    var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).FirstOrDefaultAsync();
-                    // Accepted terms, on a trip
-                    if (!vehicle.IsAvailable)
-                    {
-                        return RedirectToAction(nameof(TripPage));
-                    }
-                    // Not on a trip yet, waiting to check conditions and accept terms
-                    return RedirectToAction(nameof(SelectVehicle));
+                    return RedirectToAction(nameof(TripPage));
                 }
             }
         }
@@ -58,6 +52,16 @@ namespace CarRentalService.Controllers
             // Display map,list of vehicles.
             // Select a vehicle
             // Select a End location to create a trip
+            return View();
+        }
+
+        public async Task<ActionResult> CreateTrip(int vehicleID, int[] endPoint)
+        {
+            // Set Vehicle.CustomerInspecting to this customerID. Come back to this page if needed
+            // User will confirm car is good
+            // If user cancels out, car is set to IsAvailable again
+            // User gets Twillo code
+            // User enters destination
             return View();
         }
 
