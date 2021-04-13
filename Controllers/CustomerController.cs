@@ -152,6 +152,30 @@ namespace CarRentalService.Controllers
             current.AfterTripInteriorBack = "";
         }
 
+        // GET: Vehicles/Details/5
+        public async Task<ActionResult> VehicleDetails(int id, double lat, double lng)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            var vehicle = await _context.Vehicles.Where(v => v.Id == id).SingleOrDefaultAsync();
+
+            //string custLocation = customer.CurrentLat.ToString() + ',' + customer.CurrentLong.ToString();
+            //string url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + custLocation + "&destination=" + vehicle.Location + "&key=" + Secrets.GOOGLE_API_KEY;
+            //HttpClient client = new HttpClient();
+            //HttpResponseMessage response = await client.GetAsync(url);
+            //string jsonResult = await response.Content.ReadAsStringAsync();
+            //JObject jobject = JObject.Parse(jsonResult);
+            //int distanceLength = jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Length;
+
+
+
+            //var directions = 
+            //ViewBag.MapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=" + Secrets.GOOGLE_API_KEY;
+            return View(vehicle);
+
+        }
+
+
         // GET: Customers/Details/5
         public async Task<IActionResult> TripPage()
         {
