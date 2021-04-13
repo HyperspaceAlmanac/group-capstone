@@ -277,6 +277,9 @@ namespace CarRentalService.Migrations
                     b.Property<double?>("Distance")
                         .HasColumnType("float");
 
+                    b.Property<string>("DoorKey")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double?>("Duration")
                         .HasColumnType("float");
 
