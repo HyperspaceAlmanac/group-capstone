@@ -17,6 +17,7 @@ namespace CarRentalService.Models
         public double? LastKnownLongitude { get; set; }
         public bool IsAvailable { get; set; }
         public bool IsOperational { get; set; }
+        public string DoorKey { get; set; }
 
     }
 }

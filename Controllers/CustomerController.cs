@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Configuration;
 using Stripe;
+using CarRentalService.TwilioSend;
 
 namespace CarRentalService.Controllers
 {
@@ -51,6 +52,7 @@ namespace CarRentalService.Controllers
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+
             return View();
         }
 
