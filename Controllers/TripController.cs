@@ -71,8 +71,33 @@ namespace CarRentalService.Controllers
             }
         }
 
-        [HttpGet("EndTrip/{id}")]
-        public async Task<IActionResult> EndTrip(int id, [FromForm] string value)
+        [HttpGet("ConfirmLocation/{id}")]
+        public async Task<IActionResult> ConfirmLocation(int id)
+        {
+            return NotFound();
+        }
+        [HttpPut("ConfirmLocation/{id}")]
+        public async Task<IActionResult> ConfirmLocation(int id, [FromForm] string value)
+        {
+            return NotFound();
+        }
+        [HttpGet("GetStatus/{id}")]
+        public async Task<IActionResult> GetStatus(int id)
+        {
+            return NotFound();
+        }
+        [HttpPut("SetStatus/{id}")]
+        public async Task<IActionResult> SetStatus(int id, [FromForm] string value)
+        {
+            return NotFound();
+        }
+        [HttpGet("TakePictures/{id}")]
+        public async Task<IActionResult> TakePictures(int id)
+        {
+            return NotFound();
+        }
+        [HttpPut("TakePictures/{id}")]
+        public async Task<IActionResult> TakePictures(int id, [FromForm] string value)
         {
             return NotFound();
         }
@@ -92,7 +117,7 @@ namespace CarRentalService.Controllers
                     trip.EndTime = DateTime.Now;
                     _context.Update(trip);
                     await _context.SaveChangesAsync();
-                    return Ok(new TripViewModel());
+                    return Ok();
                 }
             }
             catch

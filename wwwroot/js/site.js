@@ -14,12 +14,16 @@ function handleStatus() {
             getDuringTrip();
             break;
         case 'ConfirmLocation':
+            confirmLocation();
             break;
         case 'CheckStatus':
+            checkStatus();
             break;
-        case 'Take Pictures':
+        case 'TakePictures':
+            takePictures();
             break;
         default:
+            getDuringTrip();
             break;
     }
 }
@@ -52,11 +56,96 @@ function handleDuringTrip(values) {
     rows.push("<div class='btn btn-primary' onclick='completeTripButton()'>Skip to End</div>");
     $("#MainArea").html(rows.join(""));
 }
-function endTripButton() {
-    alert("Next Step!");
+
+function handleConfirmLocation(values) {
+    $("#MainArea").empty();
+    let rows = [];
+    rows.push("<div>Enjoy your trip</div>");
+    rows.push(`<div>Destination: ${values.destination}</div>`);
+    rows.push(`<div>Estimated Time to arrival: ${values.estimatedTime} minutes</div>`);
+    rows.push("<div>Estimated Cost: $" + `${values.estimatedTime} dollars </div>`);
+    rows.push(`<div>Map coordinates: Lng: ${values.lng}, lat: ${values.lat} </div>`);
+    rows.push("<div class='btn btn-primary' onclick='endTripButton()'>End Trip</div>");
+    rows.push("<div class='btn btn-primary' onclick='completeTripButton()'>Skip to End</div>");
+    $("#MainArea").html(rows.join(""));
 }
 
-function completeTripButton() {
+function handleCheckStatus(values) {
+    $("#MainArea").empty();
+    let rows = [];
+    rows.push("<div>Enjoy your trip</div>");
+    rows.push(`<div>Destination: ${values.destination}</div>`);
+    rows.push(`<div>Estimated Time to arrival: ${values.estimatedTime} minutes</div>`);
+    rows.push("<div>Estimated Cost: $" + `${values.estimatedTime} dollars </div>`);
+    rows.push(`<div>Map coordinates: Lng: ${values.lng}, lat: ${values.lat} </div>`);
+    rows.push("<div class='btn btn-primary' onclick='endTrip()'>End Trip</div>");
+    rows.push("<div class='btn btn-primary' onclick='completeTrip()'>Skip to End</div>");
+    $("#MainArea").html(rows.join(""));
+}
+
+function handleTakePictures(values) {
+    $("#MainArea").empty();
+    let rows = [];
+    rows.push("<div>Enjoy your trip</div>");
+    rows.push(`<div>Destination: ${values.destination}</div>`);
+    rows.push(`<div>Estimated Time to arrival: ${values.estimatedTime} minutes</div>`);
+    rows.push("<div>Estimated Cost: $" + `${values.estimatedTime} dollars </div>`);
+    rows.push(`<div>Map coordinates: Lng: ${values.lng}, lat: ${values.lat} </div>`);
+    rows.push("<div class='btn btn-primary' onclick='endTrip()'>End Trip</div>");
+    rows.push("<div class='btn btn-primary' onclick='completeTrip()'>Skip to End</div>");
+    $("#MainArea").html(rows.join(""));
+}
+
+function takePictures() {
+    var id = $('#TripStatus').attr("data-id");
+    $.ajax({
+        url: 'https://localhost:44303/api/Trip/TakePhotos/' + id,
+        dataType: 'json',
+        type: 'Put',
+        contentType: 'application/json',
+        success: function (result, textStatus, jQxhr) {
+            handleTakePictures();
+        },
+        error: function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+
+
+function checkStatus() {
+    var id = $('#TripStatus').attr("data-id");
+    $.ajax({
+        url: 'https://localhost:44303/api/Trip/CheckStatus/' + id,
+        dataType: 'json',
+        type: 'Put',
+        contentType: 'application/json',
+        success: function (result, textStatus, jQxhr) {
+            handleCheckStatus();
+        },
+        error: function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+
+function confirmLocation() {
+    var id = $('#TripStatus').attr("data-id");
+    $.ajax({
+        url: 'https://localhost:44303/api/Trip/ConfirmLocation/' + id,
+        dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json',
+        success: function (result, textStatus, jQxhr) {
+            handleConfirmLocation();
+        },
+        error: function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+
+function completeTrip() {
     var id = $('#TripStatus').attr("data-id");
     $.ajax({
         url: 'https://localhost:44303/api/Trip/CompleteTrip/' + id,
