@@ -17,6 +17,7 @@ using System.Net;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using CarRentalService.ViewModels;
 
 namespace CarRentalService.Controllers
 {
