@@ -272,7 +272,7 @@ namespace CarRentalService.Data
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Issue> Issues { get; set; }
-        public DbSet<ServiceReceipt> ServiceReceipt { get; set; }
+        public DbSet<ServiceReceipt> ServiceReceipts { get; set; }
         public DbSet<Trip> Trips { get; set; }
 
     }

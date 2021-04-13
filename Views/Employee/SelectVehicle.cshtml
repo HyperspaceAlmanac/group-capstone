@@ -26,9 +26,12 @@
                 @item.Year @item.Make @item.Model
             </td>
             <td>
+                
+            </td>
+            <td>
                 @if (this.User.IsInRole("Employee"))
                 {
-                    <a asp-action="Service" asp-route-id="@item.Id">Service</a>
+                    <a asp-action="StartService" asp-route-id="@item.Id">Service Vehicle</a>
                 }
             </td>
         </tr>

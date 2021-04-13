@@ -37,15 +37,15 @@ namespace CarRentalService.Controllers
             }
             else
             {
-                //var issue = await _context.Trips.Where(trip => trip.EmployeeId == employee.Id && trip.EndTime == null).SingleOrDefaultAsync();
-                //if (trip == null)
-                //{
+                var issue = await _context.ServiceReceipts.Where(sr => sr.EmployeeId == employee.Id && sr.EndTime == null).SingleOrDefaultAsync();
+                if (issue == null)
+                {
                    return RedirectToAction("SelectVehicle");
-                //}
-                //else
-                //{
-                //    return RedirectToAction(nameof(IssuePage));
-                //}
+                }
+                else
+                {
+                    return RedirectToAction(nameof(IssuePage));
+                }
             }
             
         }
@@ -89,6 +89,71 @@ namespace CarRentalService.Controllers
             List<Vehicle> vehiclesSorted = vehicles.OrderBy(v => v.Distance).ToList();
             return View(vehiclesSorted);
         }
+
+        public async Task<ActionResult> StartService(int vehicleID, double lng, double lat)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var employee = await _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            var vehicle = await _context.Vehicles.Where(v => v.Id == vehicleID).SingleOrDefaultAsync();
+
+            ServiceReceipt serviceReceipt = PopulateTrip(employee, vehicle);
+            
+            // Assuming that vehicle always has one trip where it is placed.
+            var prevTrip = await _context.Trips.Where(t => t.VehicleId == vehicle.Id).OrderBy(t => t.EndTime).LastOrDefaultAsync();
+            if (prevTrip != null)
+            {
+                GetPreviousImageURLs(newTrip, prevTrip);
+            }
+            // Estimated cost
+            newTrip.Cost = 10.50;
+            newTrip.EndLat = lat;
+            newTrip.EndLng = lng;
+            // User will confirm car is in good condition (guaranteed to be)
+            // User gets Twillo code
+            return View(newTrip);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> StartService(Trip trip)
+        {
+            trip.StartTime = DateTime.Now;
+            trip.TripStatus = "DuringTrip";
+            _context.Trips.Add(trip);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        private ServiceReceipt PopulateTrip(Models.Employee employee, Vehicle vehicle)
+        {
+            ServiceReceipt trip = new ()
+            {
+                CustomerId = customer.Id,
+                Customer = customer,
+                VehicleId = vehicle.Id,
+                Vehicle = vehicle,
+                StartLng = vehicle.LastKnownLongitude.Value,
+                StartLat = vehicle.LastKnownLatitude.Value,
+                OdometerStart = vehicle.Odometer,
+                FuelStart = vehicle.Fuel
+            };
+            return trip;
+        }
+
+        public async Task<IActionResult> IssuePage()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var employee = await _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            
+            // Service Recept filled out. Start, end
+            var issue = await _context.ServiceReceipts.Where(sr => sr.EmployeeId == employee.Id && sr.EndTime == null).SingleOrDefaultAsync();
+
+            // Trip start values:
+            // IsOperational = False.
+            var tripValues = new TripViewModel { TripID = trip.Id, TripStatus = trip.TripStatus };
+
+            return View(tripValues);
+        }
+        //------------------------------------CRUD Below ------------------------------------------------------------
         public async Task<IActionResult> Edit()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
