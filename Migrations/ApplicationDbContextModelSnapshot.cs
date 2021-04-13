@@ -70,6 +70,25 @@ namespace CarRentalService.Migrations
                     b.HasIndex("IdentityUserId");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CompletedRegistration = true,
+                            CurrentCity = "San Diego",
+                            CurrentLat = 32.764106699999999,
+                            CurrentLong = -117.2262649,
+                            CurrentState = "CA",
+                            CurrentStreet = "500 Sea World Dr",
+                            CurrentZip = "92109",
+                            DriverLicenseNumber = "369RR1231",
+                            FirstName = "James",
+                            IdentityUserId = "638492af-3493-4c74-9b59-0e9313fe2a21",
+                            LastName = "Buchanan",
+                            PhoneNumber = "+12619811234",
+                            TotalBalance = 0
+                        });
                 });
 
             modelBuilder.Entity("CarRentalService.Models.Employee", b =>
@@ -253,6 +272,101 @@ namespace CarRentalService.Migrations
                     b.HasIndex("VehicleId");
 
                     b.ToTable("Trips");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AfterTripBackImage = "",
+                            AfterTripFrontImage = "",
+                            AfterTripInteriorBack = "",
+                            AfterTripInteriorFront = "",
+                            AfterTripLeftImage = "",
+                            AfterTripRightImage = "",
+                            BeforeTripBackImage = "",
+                            BeforeTripFrontImage = "",
+                            BeforeTripInteriorBack = "",
+                            BeforeTripInteriorFront = "",
+                            BeforeTripLeftImage = "",
+                            BeforeTripRightImage = "",
+                            Cost = 15.49,
+                            CustomerId = 1,
+                            EndLat = 1.0,
+                            EndLng = 1.0,
+                            EndTime = new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FuelEnd = 1,
+                            FuelStart = 1,
+                            IsPaid = false,
+                            OdometerEnd = 1,
+                            OdometerStart = 1,
+                            StartLat = 1.0,
+                            StartLng = 1.0,
+                            StartTime = new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TripStatus = "",
+                            VehicleId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AfterTripBackImage = "",
+                            AfterTripFrontImage = "",
+                            AfterTripInteriorBack = "",
+                            AfterTripInteriorFront = "",
+                            AfterTripLeftImage = "",
+                            AfterTripRightImage = "",
+                            BeforeTripBackImage = "",
+                            BeforeTripFrontImage = "",
+                            BeforeTripInteriorBack = "",
+                            BeforeTripInteriorFront = "",
+                            BeforeTripLeftImage = "",
+                            BeforeTripRightImage = "",
+                            Cost = 20.210000000000001,
+                            CustomerId = 1,
+                            EndLat = 1.0,
+                            EndLng = 1.0,
+                            EndTime = new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FuelEnd = 1,
+                            FuelStart = 1,
+                            IsPaid = false,
+                            OdometerEnd = 1,
+                            OdometerStart = 1,
+                            StartLat = 1.0,
+                            StartLng = 1.0,
+                            StartTime = new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TripStatus = "",
+                            VehicleId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AfterTripBackImage = "",
+                            AfterTripFrontImage = "",
+                            AfterTripInteriorBack = "",
+                            AfterTripInteriorFront = "",
+                            AfterTripLeftImage = "",
+                            AfterTripRightImage = "",
+                            BeforeTripBackImage = "",
+                            BeforeTripFrontImage = "",
+                            BeforeTripInteriorBack = "",
+                            BeforeTripInteriorFront = "",
+                            BeforeTripLeftImage = "",
+                            BeforeTripRightImage = "",
+                            Cost = 15.49,
+                            CustomerId = 1,
+                            EndLat = 1.0,
+                            EndLng = 1.0,
+                            EndTime = new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FuelEnd = 1,
+                            FuelStart = 1,
+                            IsPaid = false,
+                            OdometerEnd = 1,
+                            OdometerStart = 1,
+                            StartLat = 1.0,
+                            StartLng = 1.0,
+                            StartTime = new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TripStatus = "",
+                            VehicleId = 2
+                        });
                 });
 
             modelBuilder.Entity("CarRentalService.Models.Vehicle", b =>
@@ -540,6 +654,24 @@ namespace CarRentalService.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "638492af-3493-4c74-9b59-0e9313fe2a21",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "09baa524-8bbd-4641-b6d7-3be215fa2493",
+                            Email = "cust1@cust.com",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "CUST1@CUST.COM",
+                            NormalizedUserName = "CUST1@CUST.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEM+ixgUo5RtM44sAtJ1WN5A5KD/HDwpJppxp4BFrKzD4fqtzcEl9DBX4gUo0rvRZBw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "KPWNCNQP2JZBQ7NWCNUXZCJU27PT6PBE",
+                            TwoFactorEnabled = false,
+                            UserName = "cust1@cust.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -601,6 +733,13 @@ namespace CarRentalService.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "638492af-3493-4c74-9b59-0e9313fe2a21",
+                            RoleId = "ff2a00f0-9394-4ebf-9546-135cd2ab6500"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

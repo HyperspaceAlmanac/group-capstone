@@ -14,7 +14,7 @@
     };
 }
 
-<h1>Total Bill = $@totalBill</h1>
+<h1>Total Bill = $@Math.Round(totalBill,2)</h1>
 
 <form action="/Customer/Charge" method="POST">
     <article>
@@ -122,7 +122,7 @@
                 {
                     <form action="/Customer/Charge" method="POST">
                         <article>
-                            <label>Pay $@item.Cost Bill</label>
+                            <label>Pay $@Math.Round(item.Cost,2) Bill</label>
                         </article>
                         <input type="hidden" name="amount" value="@(item.Cost*100)" />>
                         <input type="hidden" name="description" value="Trip End Date @item.EndTime" />>
