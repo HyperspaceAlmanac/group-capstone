@@ -48,7 +48,7 @@ function handleDuringTrip(values) {
     rows.push(`<div>Estimated Time to arrival: ${values.estimatedTime} minutes</div>`);
     rows.push("<div>Estimated Cost: $" + `${values.estimatedTime} dollars </div>`);
     rows.push(`<div>Map coordinates: Lng: ${values.lng}, lat: ${values.lat} </div>`);
-    rows.push("<div class='btn btn-primary' onclick='endTripButtion()'>End Trip</div>");
+    rows.push("<div class='btn btn-primary' onclick='endTripButton()'>End Trip</div>");
     rows.push("<div class='btn btn-primary' onclick='completeTripButton()'>Skip to End</div>");
     $("#MainArea").html(rows.join(""));
 }
@@ -58,15 +58,11 @@ function endTripButton() {
 
 function completeTripButton() {
     var id = $('#TripStatus').attr("data-id");
-    var dict = {
-        Something: "String"  
-    }
     $.ajax({
         url: 'https://localhost:44303/api/Trip/CompleteTrip/' + id,
         dataType: 'json',
-        type: 'Put',
+        type: 'Get',
         contentType: 'application/json',
-        data: JSON.stringify(dict),
         success: function (result, textStatus, jQxhr) {
             alert("Trip ended");
             window.location.assign("Index");

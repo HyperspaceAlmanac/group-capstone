@@ -71,15 +71,14 @@ namespace CarRentalService.Controllers
             }
         }
 
-        // PUT api/UpdateTrip/<TripController>/5
-        [HttpPost("EndTrip/{id}")]
+        [HttpGet("EndTrip/{id}")]
         public async Task<IActionResult> EndTrip(int id, [FromForm] string value)
         {
             return NotFound();
         }
         // PUT api/UpdateTrip/<TripController>/5
-        [HttpPut("CompleteTrip/{id}")]
-        public async Task<IActionResult> CompleteTrip(int id, [FromBody] TripViewModel model)
+        [HttpGet("CompleteTrip/{id}")]
+        public async Task<IActionResult> CompleteTrip(int id)
         {
             try
             {
