@@ -78,6 +78,7 @@ namespace CarRentalService.Controllers
                 GeocodingResponse geocode = await geoCodingEngine.QueryAsync(geocodeRequest);
                 vehicles[i].LastKnownLatitude = geocode.Results.First().Geometry.Location.Latitude;
                 vehicles[i].LastKnownLongitude = geocode.Results.First().Geometry.Location.Longitude;
+                _context.Update(vehicles[i]);
                 vehicles[i].Location = vehicles[i].LastKnownLatitude.ToString() + ',' + vehicles[i].LastKnownLongitude.ToString();
 
                 string url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + custLocation + "&destination=" + vehicles[i].Location + "&key=" + Secrets.GOOGLE_API_KEY;
@@ -93,6 +94,7 @@ namespace CarRentalService.Controllers
                 double duration = Convert.ToDouble(jobject.SelectToken("routes[0].legs[0].duration.text").ToString().Substring(0, durationLength - 5));
                 vehicles[i].Duration = duration;
             }
+            await _context.SaveChangesAsync();
             List<Vehicle> vehiclesSorted = vehicles.OrderBy(v => v.Distance).ToList();
             return View(vehiclesSorted);
         }
