@@ -9,6 +9,14 @@ using CarRentalService.Data;
 using CarRentalService.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using GoogleMapsApi;
+using GoogleMapsApi.Entities.Geocoding.Response;
+using GoogleMapsApi.Entities.Geocoding.Request;
+using System.Net.Http;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CarRentalService.Controllers
 {
@@ -16,6 +24,8 @@ namespace CarRentalService.Controllers
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private HttpClient _Response;
+
         public CustomerController(ApplicationDbContext context)
         {
             _context = context;
@@ -35,7 +45,7 @@ namespace CarRentalService.Controllers
                 var trip = await _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefaultAsync();
                 if (trip == null)
                 {
-                    RedirectToAction(nameof(SelectVehicle));
+                    return RedirectToAction("SelectVehicle");
                 }
                 else
                 {
@@ -48,8 +58,42 @@ namespace CarRentalService.Controllers
         public async Task<ActionResult> SelectVehicle()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
-            return View();
+            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            var vehicles = _context.Vehicles.Where(v => v.IsAvailable == true).ToList();
+            string custLocation = customer.CurrentLat.ToString() + ',' + customer.CurrentLong.ToString();
+
+            //Save customer location a GeoCode request.
+
+            for (var i = 0; i < vehicles.Count(); i++)
+            {
+                var geoCodingEngine = GoogleMaps.Geocode;
+                GeocodingRequest geocodeRequest = new GeocodingRequest()
+                {
+                    Address = $"{vehicles[i].CurrentStreet}, {vehicles[i].CurrentCity}, {vehicles[i].CurrentState} {vehicles[i].CurrentZip}",
+                    ApiKey = Secrets.GOOGLE_API_KEY,
+                };
+                GeocodingResponse geocode = await geoCodingEngine.QueryAsync(geocodeRequest);
+                vehicles[i].LastKnownLatitude = geocode.Results.First().Geometry.Location.Latitude;
+                vehicles[i].LastKnownLongitude = geocode.Results.First().Geometry.Location.Longitude;
+                vehicles[i].Location = vehicles[i].LastKnownLatitude.ToString() + ',' + vehicles[i].LastKnownLongitude.ToString();
+
+                string url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + custLocation + "&destination=" + vehicles[i].Location + "&key=" + Secrets.GOOGLE_API_KEY;
+                HttpClient client = new HttpClient();
+                HttpResponseMessage response = await client.GetAsync(url);
+                string jsonResult = await response.Content.ReadAsStringAsync();
+                JObject jobject = JObject.Parse(jsonResult);
+                int distanceLength = jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Length;
+                double distance = Convert.ToDouble(jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Substring(0, distanceLength - 3));
+                vehicles[i].Distance = distance;
+
+                int durationLength = jobject.SelectToken("routes[0].legs[0].duration.text").ToString().Length;
+                double duration = Convert.ToDouble(jobject.SelectToken("routes[0].legs[0].duration.text").ToString().Substring(0, durationLength - 5));
+                vehicles[i].Duration = duration;
+            }
+            List<Vehicle> vehiclesSorted = vehicles.OrderBy(v => v.Distance).ToList();
+
+
+            return View(vehiclesSorted);
         }
 
         // GET: Customers/Details/5
@@ -110,7 +154,7 @@ namespace CarRentalService.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Address,PhoneNumber,DriverLicenseNumber,CompletedRegistration,TotalBalance,IdentityUserId")] Customer customer)
+        public async Task<IActionResult> Edit(int id, Customer customer)
         {
             if (id != customer.Id)
             {
@@ -121,6 +165,17 @@ namespace CarRentalService.Controllers
             {
                 try
                 {
+                    GeocodingRequest geocodeRequest = new GeocodingRequest()
+                    {
+                        Address = $"{customer.CurrentStreet}, {customer.CurrentCity}, {customer.CurrentState} {customer.CurrentZip}",
+                        ApiKey = Secrets.GOOGLE_API_KEY,
+                        SigningKey = "Lew Vine"
+                    };
+
+                    var geoCodingEngine = GoogleMaps.Geocode;
+                    GeocodingResponse geocode = await geoCodingEngine.QueryAsync(geocodeRequest);
+                    customer.CurrentLat = geocode.Results.First().Geometry.Location.Latitude;
+                    customer.CurrentLong = geocode.Results.First().Geometry.Location.Longitude;
                     customer.CompletedRegistration = true;
                     _context.Update(customer);
                     await _context.SaveChangesAsync();

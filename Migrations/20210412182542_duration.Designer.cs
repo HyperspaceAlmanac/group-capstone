@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRentalService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210408202651_IntializingDBAfterClearing")]
-    partial class IntializingDBAfterClearing
+    [Migration("20210412182542_duration")]
+    partial class duration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,7 +28,25 @@ namespace CarRentalService.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Address")
+                    b.Property<bool>("CompletedRegistration")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("CurrentCity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("CurrentLat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CurrentLong")
+                        .HasColumnType("float");
+
+                    b.Property<string>("CurrentState")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentStreet")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentZip")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DriverLicenseNumber")
@@ -66,6 +84,9 @@ namespace CarRentalService.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("CompletedRegistration")
+                        .HasColumnType("bit");
+
                     b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -85,12 +106,175 @@ namespace CarRentalService.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("CarRentalService.Models.Issue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Resolved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ServiceNeeded")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeReported")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("Issues");
+                });
+
+            modelBuilder.Entity("CarRentalService.Models.ServiceReceipt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("ServiceReceipt");
+                });
+
+            modelBuilder.Entity("CarRentalService.Models.Trip", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AfterTripBackImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripFrontImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripInteriorBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripInteriorFront")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripLeftImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripRightImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripBackImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripFrontImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripInteriorBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripInteriorFront")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripLeftImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripRightImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("EndLat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("EndLng")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FuelEnd")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FuelStart")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OdometerEnd")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OdometerStart")
+                        .HasColumnType("int");
+
+                    b.Property<double>("StartLat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("StartLng")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("Trips");
+                });
+
             modelBuilder.Entity("CarRentalService.Models.Vehicle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CurrentCity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentState")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentStreet")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentZip")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Distance")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Duration")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Fuel")
                         .HasColumnType("int");
@@ -107,6 +291,9 @@ namespace CarRentalService.Migrations
                     b.Property<double?>("LastKnownLongitude")
                         .HasColumnType("float");
 
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Model")
                         .HasColumnType("nvarchar(max)");
 
@@ -116,6 +303,34 @@ namespace CarRentalService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Vehicles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CurrentCity = "Chula Vista",
+                            CurrentState = "CA",
+                            CurrentStreet = "555 Claire Avenue",
+                            CurrentZip = "91910",
+                            Fuel = 100,
+                            IsAvailable = true,
+                            IsOperational = true,
+                            Model = "Ford",
+                            Odometer = 1000
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CurrentCity = "San Diego",
+                            CurrentState = "CA",
+                            CurrentStreet = "2519 Calle Gaviota",
+                            CurrentZip = "92139",
+                            Fuel = 100,
+                            IsAvailable = true,
+                            IsOperational = true,
+                            Model = "Oldsmobile",
+                            Odometer = 1000
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -353,6 +568,55 @@ namespace CarRentalService.Migrations
                         .HasForeignKey("IdentityUserId");
 
                     b.Navigation("IdentityUser");
+                });
+
+            modelBuilder.Entity("CarRentalService.Models.Issue", b =>
+                {
+                    b.HasOne("CarRentalService.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("CarRentalService.Models.ServiceReceipt", b =>
+                {
+                    b.HasOne("CarRentalService.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CarRentalService.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("CarRentalService.Models.Trip", b =>
+                {
+                    b.HasOne("CarRentalService.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CarRentalService.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

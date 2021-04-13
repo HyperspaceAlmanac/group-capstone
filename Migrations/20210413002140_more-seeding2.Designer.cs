@@ -4,14 +4,16 @@ using CarRentalService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CarRentalService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210413002140_more-seeding2")]
+    partial class moreseeding2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,11 +270,11 @@ namespace CarRentalService.Migrations
                     b.Property<string>("CurrentZip")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Distance")
-                        .HasColumnType("float");
+                    b.Property<string>("Distance")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Duration")
-                        .HasColumnType("float");
+                    b.Property<string>("Duration")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Fuel")
                         .HasColumnType("int");
@@ -320,7 +322,7 @@ namespace CarRentalService.Migrations
                             CurrentStreet = "555 Claire Avenue",
                             CurrentZip = "91910",
                             Fuel = 100,
-                            Image = "https://bringatrailer.com/wp-content/uploads/2017/03/58c1cafa21bcb_143322.jpg?fit=940%2C598",
+                            Image = "https://s.aolcdn.com/commerce/autodata/images/CAB00FOT111B0101.jpg",
                             IsAvailable = true,
                             IsOperational = true,
                             Make = "Ford",
@@ -336,7 +338,7 @@ namespace CarRentalService.Migrations
                             CurrentStreet = "2519 Calle Gaviota",
                             CurrentZip = "92139",
                             Fuel = 100,
-                            Image = "https://car-from-uk.com/ebay/carphotos/full/ebay657229.jpg",
+                            Image = "https://cdn1.mecum.com/auctions/ch1014/ch1014-195726/images/ch1014-195726_9@2x.jpg?1412794670000",
                             IsAvailable = true,
                             IsOperational = true,
                             Make = "Oldsmobile",
@@ -352,7 +354,7 @@ namespace CarRentalService.Migrations
                             CurrentStreet = "1120 Cuyamaca Avenue",
                             CurrentZip = "91911",
                             Fuel = 100,
-                            Image = "https://hips.hearstapps.com/hmg-prod/amv-prod-cad-assets/images/08q1/267367/2008-toyota-tacoma-photo-193561-s-original.jpg?fill=2:1&resize=1200:*",
+                            Image = "https://www.google.com/imgres?imgurl=https%3A%2F%2Fsmartcdn.prod.postmedia.digital%2Fdriving%2Fimages%3Furl%3Dhttp%3A%2F%2Fsmartcdn.prod.postmedia.digital%2Fdriving%2Fwp-content%2Fuploads%2F2013%2F08%2F85428491.jpg%26w%3D580%26h%3D370&imgrefurl=https%3A%2F%2Fdriving.ca%2Ftoyota%2Ftacoma%2Freviews%2Froad-test%2Froad-test-2008-toyota-tacoma-2&tbnid=wEkshGvejDsKKM&vet=12ahUKEwj-ytXB9vnvAhXBDlMKHYImAzgQMygBegUIARDlAQ..i&docid=ZDXPJovseuFbHM&w=580&h=370&q=2008%20toyota%20tacoma&ved=2ahUKEwj-ytXB9vnvAhXBDlMKHYImAzgQMygBegUIARDlAQ",
                             IsAvailable = true,
                             IsOperational = true,
                             Make = "Toyota",
@@ -368,7 +370,7 @@ namespace CarRentalService.Migrations
                             CurrentStreet = "9449 Friars Road",
                             CurrentZip = "92108",
                             Fuel = 100,
-                            Image = "https://cdn1.mecum.com/auctions/pa0715/pa0715-216861/images/pa0715-216861_2@2x.jpg?1436997552000",
+                            Image = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fdavidsclassiccars.com%2Fchevrolet%2F24214-1979-chevrolet-blazer-k5-4x4-lifted-rebuilt-350-v8-auto-custom-deluxe-nt-bronco.html&psig=AOvVaw3kFOxYaZnHGAr3Tld8YuN6&ust=1618358915386000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCLjNxff2-e8CFQAAAAAdAAAAABAD",
                             IsAvailable = true,
                             IsOperational = true,
                             Make = "Chevrolet",
