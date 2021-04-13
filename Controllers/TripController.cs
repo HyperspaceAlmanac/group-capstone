@@ -74,7 +74,25 @@ namespace CarRentalService.Controllers
         [HttpGet("ConfirmLocation/{id}")]
         public async Task<IActionResult> ConfirmLocation(int id)
         {
-            return NotFound();
+            try
+            {
+                var trip = await _context.Trips.Where(t => t.Id == id).SingleOrDefaultAsync();
+                if (trip == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    trip.EndTime = DateTime.Now;
+                    _context.Update(trip);
+                    await _context.SaveChangesAsync();
+                    return Ok();
+                }
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
         [HttpPut("ConfirmLocation/{id}")]
         public async Task<IActionResult> ConfirmLocation(int id, [FromForm] string value)

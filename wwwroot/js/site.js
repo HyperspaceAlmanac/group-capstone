@@ -101,6 +101,21 @@ function takePictures() {
     $.ajax({
         url: 'https://localhost:44303/api/Trip/TakePhotos/' + id,
         dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json',
+        success: function (result, textStatus, jQxhr) {
+            handleTakePictures();
+        },
+        error: function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+function putTakePictures() {
+    var id = $('#TripStatus').attr("data-id");
+    $.ajax({
+        url: 'https://localhost:44303/api/Trip/TakePhotos/' + id,
+        dataType: 'json',
         type: 'Put',
         contentType: 'application/json',
         success: function (result, textStatus, jQxhr) {
@@ -114,6 +129,22 @@ function takePictures() {
 
 
 function checkStatus() {
+    var id = $('#TripStatus').attr("data-id");
+    $.ajax({
+        url: 'https://localhost:44303/api/Trip/CheckStatus/' + id,
+        dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json',
+        success: function (result, textStatus, jQxhr) {
+            handleCheckStatus();
+        },
+        error: function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+
+function putCheckStatus() {
     var id = $('#TripStatus').attr("data-id");
     $.ajax({
         url: 'https://localhost:44303/api/Trip/CheckStatus/' + id,
@@ -135,6 +166,22 @@ function confirmLocation() {
         url: 'https://localhost:44303/api/Trip/ConfirmLocation/' + id,
         dataType: 'json',
         type: 'Get',
+        contentType: 'application/json',
+        success: function (result, textStatus, jQxhr) {
+            handleConfirmLocation();
+        },
+        error: function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+
+function putConfirmLocation() {
+    var id = $('#TripStatus').attr("data-id");
+    $.ajax({
+        url: 'https://localhost:44303/api/Trip/ConfirmLocation/' + id,
+        dataType: 'json',
+        type: 'Put',
         contentType: 'application/json',
         success: function (result, textStatus, jQxhr) {
             handleConfirmLocation();
