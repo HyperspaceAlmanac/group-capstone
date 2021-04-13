@@ -129,7 +129,7 @@ namespace CarRentalService.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        private Trip PopulateTrip(Customer customer, Vehicle vehicle)
+        private Trip PopulateTrip(Models.Customer customer, Vehicle vehicle)
         {
             Trip trip = new Trip {CustomerId = customer.Id, Customer = customer, VehicleId = vehicle.Id, Vehicle = vehicle, StartLng = vehicle.LastKnownLongitude.Value,
                 StartLat = vehicle.LastKnownLatitude.Value, OdometerStart = vehicle.Odometer, FuelStart = vehicle.Fuel};
@@ -197,7 +197,7 @@ namespace CarRentalService.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Customer customer)
+        public async Task<IActionResult> Edit(int id, Models.Customer customer)
         {
             if (id != customer.Id)
             {
@@ -259,7 +259,7 @@ namespace CarRentalService.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Customer customer)
+        public async Task<IActionResult> Create(Models.Customer customer)
         {
             if (ModelState.IsValid)
             {
