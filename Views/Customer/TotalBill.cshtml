@@ -1,0 +1,147 @@
+﻿@model IEnumerable<CarRentalService.Models.Trip>
+
+@{
+    ViewData["Title"] = "TotalBill";
+
+    double totalBill = 0;
+
+    foreach (var item in Model)
+    {
+        if (!item.IsPaid)
+        {
+            totalBill += item.Cost;
+        }
+    };
+}
+
+<h1>Total Bill = $@totalBill</h1>
+
+<form action="/Customer/Charge" method="POST">
+    <article>
+        <label>Pay $@totalBill Bill</label>
+    </article>
+    <input type="hidden" name="amount" value="@(totalBill*100)" />>
+    <input type="hidden" name="description" value="Pay all trips" />>
+    <input type="hidden" name="tripId" value="-1" />>
+    <script src="//checkout.stripe.com/v2/checkout.js"
+            class="stripe-button"
+            data-key="@ViewBag.StripePublishKey"
+            data-locale="auto"
+            data-description="Pay all trips"
+            data-amount="@(totalBill*100)">
+    </script>
+</form>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StartLng)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartLat)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndLng)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndLat)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OdometerStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OdometerEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FuelStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FuelEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cost)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Vehicle)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartLng)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartLat)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndLng)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndLat)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OdometerStart)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OdometerEnd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FuelStart)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FuelEnd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vehicle.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer.Id)
+            </td>
+            <td>
+                @if (item.IsPaid == false)
+                {
+                    <form action="/Customer/Charge" method="POST">
+                        <article>
+                            <label>Pay $@item.Cost Bill</label>
+                        </article>
+                        <input type="hidden" name="amount" value="@(item.Cost*100)" />>
+                        <input type="hidden" name="description" value="Trip End Date @item.EndTime" />>
+                        <input type="hidden" name="tripId" value="@item.Id" />>
+                        <script src="//checkout.stripe.com/v2/checkout.js"
+                                class="stripe-button"
+                                data-key="@ViewBag.StripePublishKey"
+                                data-locale="auto"
+                                data-description="Trip @item.EndTime"
+                                data-amount="@(item.Cost*100)">
+                        </script>
+                    </form>
+                }
+                else
+                {
+                    <a><b>Fully Paid</b></a>
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -4,14 +4,16 @@ using CarRentalService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CarRentalService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210412181159_JWTripIsPaidBoolAdds")]
+    partial class JWTripIsPaidBoolAdds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,26 +28,11 @@ namespace CarRentalService.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("CompletedRegistration")
                         .HasColumnType("bit");
-
-                    b.Property<string>("CurrentCity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("CurrentLat")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CurrentLong")
-                        .HasColumnType("float");
-
-                    b.Property<string>("CurrentState")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CurrentStreet")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CurrentZip")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DriverLicenseNumber")
                         .HasColumnType("nvarchar(max)");
@@ -240,9 +227,6 @@ namespace CarRentalService.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TripStatus")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
@@ -262,29 +246,8 @@ namespace CarRentalService.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CurrentCity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CurrentState")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CurrentStreet")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CurrentZip")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Distance")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("Duration")
-                        .HasColumnType("float");
-
                     b.Property<int>("Fuel")
                         .HasColumnType("int");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
@@ -298,106 +261,15 @@ namespace CarRentalService.Migrations
                     b.Property<double?>("LastKnownLongitude")
                         .HasColumnType("float");
 
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Make")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Model")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Odometer")
                         .HasColumnType("int");
 
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Vehicles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CurrentCity = "Chula Vista",
-                            CurrentState = "CA",
-                            CurrentStreet = "555 Claire Avenue",
-                            CurrentZip = "91910",
-                            Fuel = 100,
-                            Image = "https://bringatrailer.com/wp-content/uploads/2017/03/58c1cafa21bcb_143322.jpg?fit=940%2C598",
-                            IsAvailable = true,
-                            IsOperational = true,
-                            Make = "Ford",
-                            Model = "F-150",
-                            Odometer = 1000,
-                            Year = 2000
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CurrentCity = "San Diego",
-                            CurrentState = "CA",
-                            CurrentStreet = "2519 Calle Gaviota",
-                            CurrentZip = "92139",
-                            Fuel = 100,
-                            Image = "https://car-from-uk.com/ebay/carphotos/full/ebay657229.jpg",
-                            IsAvailable = true,
-                            IsOperational = true,
-                            Make = "Oldsmobile",
-                            Model = "Cutlass",
-                            Odometer = 1000,
-                            Year = 1985
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CurrentCity = "Chula Vista",
-                            CurrentState = "CA",
-                            CurrentStreet = "1120 Cuyamaca Avenue",
-                            CurrentZip = "91911",
-                            Fuel = 100,
-                            Image = "https://hips.hearstapps.com/hmg-prod/amv-prod-cad-assets/images/08q1/267367/2008-toyota-tacoma-photo-193561-s-original.jpg?fill=2:1&resize=1200:*",
-                            IsAvailable = true,
-                            IsOperational = true,
-                            Make = "Toyota",
-                            Model = "Tacoma",
-                            Odometer = 101011,
-                            Year = 2008
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CurrentCity = "San Diego",
-                            CurrentState = "CA",
-                            CurrentStreet = "9449 Friars Road",
-                            CurrentZip = "92108",
-                            Fuel = 100,
-                            Image = "https://cdn1.mecum.com/auctions/pa0715/pa0715-216861/images/pa0715-216861_2@2x.jpg?1436997552000",
-                            IsAvailable = true,
-                            IsOperational = true,
-                            Make = "Chevrolet",
-                            Model = "Bronco",
-                            Odometer = 90011,
-                            Year = 1979
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CurrentCity = "Chula Vista",
-                            CurrentState = "CA",
-                            CurrentStreet = "740 Hilltop Drive",
-                            CurrentZip = "91910",
-                            Fuel = 100,
-                            Image = "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/2019-nissan-altima-102-1538074559.jpg?crop=0.822xw:1.00xh;0.138xw,0&resize=640:*",
-                            IsAvailable = true,
-                            IsOperational = true,
-                            Make = "Nissan",
-                            Model = "Altima",
-                            Odometer = 90011,
-                            Year = 2021
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

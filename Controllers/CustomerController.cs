@@ -9,9 +9,13 @@ using CarRentalService.Data;
 using CarRentalService.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+
+using System.Configuration;
 using GoogleMapsApi;
 using GoogleMapsApi.Entities.Geocoding.Response;
 using GoogleMapsApi.Entities.Geocoding.Request;
+using Stripe;
+using CarRentalService.TwilioSend;
 using System.Net.Http;
 using System.Net;
 using System.IO;
@@ -236,7 +240,7 @@ namespace CarRentalService.Controllers
             return View(customer);
         }
 
-        public async Task<IActionResult> RegisterAccount(Customer customer)
+        public async Task<IActionResult> RegisterAccount(Models.Customer customer)
         {
             _context.Add(customer);
             await _context.SaveChangesAsync();
@@ -300,6 +304,61 @@ namespace CarRentalService.Controllers
         private bool CustomerExists(int id)
         {
             return _context.Customers.Any(e => e.Id == id);
+        }
+
+        public ActionResult TotalBill()
+        {
+            ViewBag.StripePublishKey = Secrets.STRIPES_PUBLIC_KEY;
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+
+            List<Trip> customerTrips = _context.Trips.Where(t => t.CustomerId.Equals(customer.Id)).ToList();
+            return View(customerTrips);
+        }
+
+        [HttpPost]
+        public ActionResult Charge(string stripeToken, string stripeEmail, int amount, string description, int tripId)
+        {
+            StripeConfiguration.ApiKey = Secrets.STRIPES_API_KEY;
+            var myCharge = new ChargeCreateOptions();
+            myCharge.Amount = amount;
+            myCharge.Currency = "USD";
+            myCharge.ReceiptEmail = stripeEmail;
+            myCharge.Description = description;
+            myCharge.Source = stripeToken;
+            myCharge.Capture = true;
+            var chargeService = new ChargeService();
+            try
+            {
+                Charge stripeCharge = chargeService.Create(myCharge);
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+
+                if (tripId.Equals(-1))
+                {
+                    List<Trip> allTrips = _context.Trips.Where(t => t.CustomerId.Equals(customer.Id)).ToList();
+                    foreach (var trip in allTrips)
+                    {
+                        trip.IsPaid = true;
+                        _context.Update(trip);
+                    }
+                }
+                else
+                {
+                    Trip tripPaid = _context.Trips.Where(t => t.Id.Equals(tripId)).FirstOrDefault();
+                    tripPaid.IsPaid = true;
+                    _context.Update(tripPaid);
+                }
+                _context.SaveChanges();
+
+                ViewBag.PaymentInfo = myCharge;
+                return View(true);
+            }
+            catch (Exception exceptionThrown)
+            {
+                ViewBag.Exception = exceptionThrown;
+                return View(false);
+            }
         }
     }
 }

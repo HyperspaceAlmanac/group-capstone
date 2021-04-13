@@ -36,6 +36,7 @@ namespace CarRentalService.Models
         public string AfterTripRightImage { get; set; }
         public string AfterTripInteriorFront { get; set; }
         public string AfterTripInteriorBack { get; set; }
+        public bool IsPaid { get; set; }
 
         [ForeignKey(nameof(Vehicle))]
         public int VehicleId { get; set; }
