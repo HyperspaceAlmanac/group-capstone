@@ -8,7 +8,7 @@ namespace CarRentalService.ViewModels
 {
     public class TripViewModel
     {
-        public Customer Customer { get; set; }
-        public Trip Trip { get; set; }
+        public int TripID { get; set; }
+        public string TripStatus { get; set; }
     }
 }

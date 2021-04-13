@@ -82,6 +82,7 @@ namespace CarRentalService.Controllers
         public async Task<IActionResult> CreateTrip(Trip trip)
         {
             trip.StartTime = DateTime.Now;
+            trip.TripStatus = "DuringTrip";
             _context.Trips.Add(trip);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -116,12 +117,12 @@ namespace CarRentalService.Controllers
             var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
             // Trip filled out. Start, end
             var trip = await _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefaultAsync();
-            var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).SingleOrDefaultAsync();
 
             // Trip start values:
-            // IsOperational = False. 
+            // IsOperational = False.
+            var tripValues = new TripViewModel {TripID = trip.Id, TripStatus = trip.TripStatus};
 
-            return View();
+            return View(tripValues);
             
         }
 

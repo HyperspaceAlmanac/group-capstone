@@ -7,14 +7,6 @@ using System.Threading.Tasks;
 
 namespace CarRentalService.Models
 {
-    public enum TripStatus
-    {
-        DuringTrip,
-        AtDestination,
-        FillOutStatus,
-        CheckConditions,
-        Completed
-    }
     public class Trip
     {
         [Key]
@@ -30,7 +22,7 @@ namespace CarRentalService.Models
         public double Cost { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
-        public TripStatus Status { get; set; }
+        public string TripStatus { get; set; }
         public string BeforeTripFrontImage { get; set; }
         public string BeforeTripBackImage { get; set; }
         public string BeforeTripLeftImage { get; set; }
