@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRentalService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210409141220_initialJWmigration")]
-    partial class initialJWmigration
+    [Migration("20210413053342_TripStatusMapped")]
+    partial class TripStatusMapped
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -152,6 +152,42 @@ namespace CarRentalService.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AfterTripBackImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripFrontImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripInteriorBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripInteriorFront")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripLeftImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripRightImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripBackImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripFrontImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripInteriorBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripInteriorFront")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripLeftImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripRightImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("Cost")
                         .HasColumnType("float");
 
@@ -166,6 +202,12 @@ namespace CarRentalService.Migrations
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("FuelEnd")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FuelStart")
+                        .HasColumnType("int");
 
                     b.Property<int>("OdometerEnd")
                         .HasColumnType("int");
@@ -182,13 +224,10 @@ namespace CarRentalService.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("TripStatus")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("fuelEnd")
-                        .HasColumnType("int");
-
-                    b.Property<int>("fuelStart")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

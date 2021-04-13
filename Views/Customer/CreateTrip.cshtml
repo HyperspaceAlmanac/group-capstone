@@ -1,0 +1,47 @@
+﻿@model CarRentalService.Models.Trip
+
+@{
+    ViewData["Title"] = "CreateTrip";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1>Create Trip</h1>
+<div>Vehicle: @Model.Vehicle.Model</div>
+<div>Estimated Cost: $10.50</div>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateTrip">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="StartLng" />
+            <input type="hidden" asp-for="StartLat" />
+            <input type="hidden" asp-for="OdometerStart" />
+            <input type="hidden" asp-for="FuelStart" />
+            <input type="hidden" asp-for="Cost" />
+            <input type="hidden" asp-for="BeforeTripFrontImage" />
+            <input type="hidden" asp-for="BeforeTripBackImage" />
+            <input type="hidden" asp-for="BeforeTripLeftImage" />
+            <input type="hidden" asp-for="BeforeTripRightImage" />
+            <input type="hidden" asp-for="BeforeTripInteriorFront" />
+            <input type="hidden" asp-for="BeforeTripInteriorBack" />
+            <input type="hidden" asp-for="CustomerId" />
+            <input type="hidden" asp-for="VehicleId" />
+
+            <div class="text-dark"><input type="checkbox" required> I acknowledge that the vehicle matches the previously taken photos</div>
+            <div class="text-dark"><input type="checkbox" required> I acknowledge that the tires are all in good condition</div>
+            <div class="text-dark"><input type="checkbox" required> I acknowledge that the body of the vehicle is in good condition</div>
+            <div class="text-dark"><input type="checkbox" required> I acknowledge that the windows look okay</div>
+            <div class="text-dark"><input type="checkbox" required> I acknowledge that the interior of the vehicle is clean</div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

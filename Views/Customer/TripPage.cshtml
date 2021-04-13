@@ -1,17 +1,11 @@
-﻿@model CarRentalService.Models.Customer
+﻿@model CarRentalService.ViewModels.TripViewModel
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row">
-        <div asp-action="Details" class="col-3 btn-secondary">Profile</div>
-        <div asp-action="TripPage"  type="button" class="col-3 btn btn-primary">Trip</div>
-</div>
-
 <h1>Trip Page</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div id="TripStatus" data-status=@Model.TripStatus data-id=@Model.TripID data-endDestination="Some Where"></div>
+<div id="MainArea">Place Holder Values</div>

@@ -22,6 +22,7 @@ namespace CarRentalService.Models
         public double Cost { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+        public string TripStatus { get; set; }
         public string BeforeTripFrontImage { get; set; }
         public string BeforeTripBackImage { get; set; }
         public string BeforeTripLeftImage { get; set; }

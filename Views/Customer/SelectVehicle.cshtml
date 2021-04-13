@@ -1,8 +1,47 @@
-﻿
+﻿@model IEnumerable<CarRentalService.Models.Vehicle>
+
 @{
-    ViewData["Title"] = "SelectVehicle";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Index";
 }
 
-<h1>SelectVehicle</h1>
+<h1>Index</h1>
 
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td style="display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-variant: small-caps; height: 100%;">@item.Distance miles away</td>
+            <td>
+                <img style="width:100%; max-width: 200px;" src="@Url.Content(item.Image)" />
+            </td>
+            <td style="display: flex; align-items: center; justify-content: center; height: 100%; font-variant: small-caps; font-size: 1.5rem; font-weight: 600; font-family: Verdana, Geneva, Tahoma, sans-serif;">
+                @item.Year @item.Make @item.Model
+            </td>
+            <td>
+                @if (this.User.IsInRole("Customer"))
+                {
+                    <a asp-action="Book" class="btn btn-primary" asp-route-id="@item.Id">Book Now</a>
+                }
+                @if (this.User.IsInRole("Employee"))
+                {
+                    <a asp-action="Book" asp-route-id="@item.Id">Book</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

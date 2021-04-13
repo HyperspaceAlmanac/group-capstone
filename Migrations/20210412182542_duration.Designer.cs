@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarRentalService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210408202747_ResolvingForeignKeyDependency")]
-    partial class ResolvingForeignKeyDependency
+    [Migration("20210412182542_duration")]
+    partial class duration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,7 +28,25 @@ namespace CarRentalService.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Address")
+                    b.Property<bool>("CompletedRegistration")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("CurrentCity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("CurrentLat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CurrentLong")
+                        .HasColumnType("float");
+
+                    b.Property<string>("CurrentState")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentStreet")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentZip")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DriverLicenseNumber")
@@ -65,6 +83,9 @@ namespace CarRentalService.Migrations
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("CompletedRegistration")
+                        .HasColumnType("bit");
 
                     b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(450)");
@@ -146,6 +167,42 @@ namespace CarRentalService.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AfterTripBackImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripFrontImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripInteriorBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripInteriorFront")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripLeftImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AfterTripRightImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripBackImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripFrontImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripInteriorBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripInteriorFront")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripLeftImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BeforeTripRightImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("Cost")
                         .HasColumnType("float");
 
@@ -160,6 +217,12 @@ namespace CarRentalService.Migrations
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("FuelEnd")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FuelStart")
+                        .HasColumnType("int");
 
                     b.Property<int>("OdometerEnd")
                         .HasColumnType("int");
@@ -179,12 +242,6 @@ namespace CarRentalService.Migrations
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("fuelEnd")
-                        .HasColumnType("int");
-
-                    b.Property<int>("fuelStart")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
@@ -201,6 +258,24 @@ namespace CarRentalService.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("CurrentCity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentState")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentStreet")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentZip")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Distance")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Duration")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Fuel")
                         .HasColumnType("int");
 
@@ -216,6 +291,9 @@ namespace CarRentalService.Migrations
                     b.Property<double?>("LastKnownLongitude")
                         .HasColumnType("float");
 
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Model")
                         .HasColumnType("nvarchar(max)");
 
@@ -225,6 +303,34 @@ namespace CarRentalService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Vehicles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CurrentCity = "Chula Vista",
+                            CurrentState = "CA",
+                            CurrentStreet = "555 Claire Avenue",
+                            CurrentZip = "91910",
+                            Fuel = 100,
+                            IsAvailable = true,
+                            IsOperational = true,
+                            Model = "Ford",
+                            Odometer = 1000
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CurrentCity = "San Diego",
+                            CurrentState = "CA",
+                            CurrentStreet = "2519 Calle Gaviota",
+                            CurrentZip = "92139",
+                            Fuel = 100,
+                            IsAvailable = true,
+                            IsOperational = true,
+                            Model = "Oldsmobile",
+                            Odometer = 1000
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

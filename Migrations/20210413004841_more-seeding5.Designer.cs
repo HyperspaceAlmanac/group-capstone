@@ -4,14 +4,16 @@ using CarRentalService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CarRentalService.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210413004841_more-seeding5")]
+    partial class moreseeding5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,9 +224,6 @@ namespace CarRentalService.Migrations
                     b.Property<int>("FuelStart")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("bit");
-
                     b.Property<int>("OdometerEnd")
                         .HasColumnType("int");
 
@@ -239,9 +238,6 @@ namespace CarRentalService.Migrations
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("TripStatus")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
@@ -274,11 +270,11 @@ namespace CarRentalService.Migrations
                     b.Property<string>("CurrentZip")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Distance")
-                        .HasColumnType("float");
+                    b.Property<int?>("Distance")
+                        .HasColumnType("int");
 
-                    b.Property<double?>("Duration")
-                        .HasColumnType("float");
+                    b.Property<int?>("Duration")
+                        .HasColumnType("int");
 
                     b.Property<int>("Fuel")
                         .HasColumnType("int");
