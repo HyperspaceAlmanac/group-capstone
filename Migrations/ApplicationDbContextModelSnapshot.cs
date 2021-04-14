@@ -98,23 +98,38 @@ namespace CarRentalService.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("CompletedRegistration")
                         .HasColumnType("bit");
+
+                    b.Property<string>("CurrentCity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("CurrentLat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CurrentLong")
+                        .HasColumnType("float");
+
+                    b.Property<string>("CurrentState")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentStreet")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CurrentZip")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Zipcode")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -162,7 +177,10 @@ namespace CarRentalService.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Time")
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("VehicleId")
@@ -174,7 +192,7 @@ namespace CarRentalService.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("ServiceReceipt");
+                    b.ToTable("ServiceReceipts");
                 });
 
             modelBuilder.Entity("CarRentalService.Models.Trip", b =>

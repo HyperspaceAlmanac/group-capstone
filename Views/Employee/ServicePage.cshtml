@@ -1,5 +1,38 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model CarRentalService.Models.ServiceReceipt
+
 @{
+    ViewData["Title"] = "Service Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<h1>Current Service</h1>
+
+<div>
+    <h4>Info</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Issue Servicing
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            Employee Name
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Employee.FirstName @Model.Employee.LastName
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+        <dt class="col-sm-2">
+            Vehicle
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Vehicle.Year @Model.Vehicle.Make @Model.Vehicle.Model
+        </dd>
+    </dl>
+</div>

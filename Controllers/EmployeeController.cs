@@ -45,7 +45,7 @@ namespace CarRentalService.Controllers
                 }
                 else
                 {
-                    return RedirectToAction(nameof(IssuePage));
+                    return RedirectToAction(nameof(ServicePage));
                 }
             }
             
@@ -54,7 +54,7 @@ namespace CarRentalService.Controllers
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var employee = _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefault();
-            var vehicles = _context.Vehicles.Where(v => v.IsAvailable == true).ToList();
+            var vehicles = _context.Vehicles.Where(v => v.IsAvailable == true && v.IsOperational == false).ToList();
             string employeeLocation = employee.CurrentLat.ToString() + ',' + employee.CurrentLong.ToString();
 
             //Save employee location a GeoCode request.
@@ -91,12 +91,12 @@ namespace CarRentalService.Controllers
             return View(vehiclesSorted);
         }
 
-        public async Task<ActionResult> StartService(int vehicleID, int issueID)
+        public async Task<ActionResult> StartService(int vehicleID)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             Employee employee = await _context.Employees.Where(c => c.IdentityUserId == userId).FirstOrDefaultAsync();
             Vehicle vehicle = await _context.Vehicles.Where(v => v.Id == vehicleID).FirstOrDefaultAsync();
-            Issue issue = await _context.Issues.Where(i => i.Id == issueID).FirstOrDefaultAsync();
+            Issue issue = await _context.Issues.Where(i => i.VehicleId == vehicleID).FirstOrDefaultAsync();
            
             ServiceReceipt serviceReceipt = PopulateServiceReceipt(employee.Id, vehicle.Id, issue.ServiceNeeded);
             IssueSRVehicleVM iSRVViewModel = new()
@@ -108,7 +108,7 @@ namespace CarRentalService.Controllers
                 
             };            
 
-            // User will confirm car is in good condition (guaranteed to be)
+            // User will confirm responsibility for vehicle servicing
             // User gets Twillo code
             return View(iSRVViewModel);
         }
@@ -124,6 +124,7 @@ namespace CarRentalService.Controllers
             iSRVViewModel.ServiceReceipt.StartTime = DateTime.Now;
             _context.ServiceReceipts.Add(iSRVViewModel.ServiceReceipt);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
         private ServiceReceipt PopulateServiceReceipt(int employeeId, int vehicleId, string issueServiceNeeded)
@@ -137,16 +138,15 @@ namespace CarRentalService.Controllers
             return serviceReceipt;
         }
 
-        public async Task<IActionResult> IssuePage()
+        public async Task<IActionResult> ServicePage()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             Employee employee = await _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
             
             // Service Receipt filled out. Start, end
             ServiceReceipt serviceReceipt = await _context.ServiceReceipts.Where(sr => sr.EmployeeId == employee.Id && sr.EndTime == null).SingleOrDefaultAsync();
-
-            // Trip start values:
-            // IsOperational = False.
+            serviceReceipt.Vehicle = await _context.Vehicles.Where(v => v.Id == serviceReceipt.VehicleId).SingleOrDefaultAsync();
+            serviceReceipt.Employee = employee;
 
             return View(serviceReceipt);
         }
