@@ -91,13 +91,23 @@ namespace CarRentalService.Controllers
             return View(vehiclesSorted);
         }
 
-        public async Task<ActionResult> StartService(int vehicleID)
+        public async Task<IActionResult> StartService(int? id)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             Employee employee = await _context.Employees.Where(c => c.IdentityUserId == userId).FirstOrDefaultAsync();
-            Vehicle vehicle = await _context.Vehicles.Where(v => v.Id == vehicleID).FirstOrDefaultAsync();
-            Issue issue = await _context.Issues.Where(i => i.VehicleId == vehicleID).FirstOrDefaultAsync();
-           
+            Vehicle vehicle = await _context.Vehicles.Where(v => v.Id == id).FirstOrDefaultAsync();
+            Issue issue = await _context.Issues.Where(i => i.VehicleId == id).FirstOrDefaultAsync();
+            if (issue == null)
+            { 
+                //if no issues are found then it puts the vehicle operational
+                vehicle.IsOperational = true;
+                vehicle.IsAvailable = true;
+                _context.Vehicles.Update(vehicle);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+
             ServiceReceipt serviceReceipt = PopulateServiceReceipt(employee.Id, vehicle.Id, issue.ServiceNeeded);
             IssueSRVehicleVM iSRVViewModel = new()
             {

@@ -29,10 +29,7 @@
                 
             </td>
             <td>
-                @if (this.User.IsInRole("Employee"))
-                {
-                    <a asp-action="StartService" asp-route-id="@item.Id">Service Vehicle</a>
-                }
+                 <a asp-action="StartService" asp-route-id="@item.Id">Service Vehicle</a>
             </td>
         </tr>
 }
