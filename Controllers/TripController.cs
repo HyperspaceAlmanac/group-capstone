@@ -1,6 +1,8 @@
 ﻿using CarRentalService.Data;
 using CarRentalService.Models;
+using CarRentalService.TwilioSend;
 using CarRentalService.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -50,6 +52,36 @@ namespace CarRentalService.Controllers
             return NotFound();
         }
 
+        private double[] GetGeoCode(string address, string city, string state, int zipcode)
+        {
+            // hard code for now, API calls will eventually be service
+            return new double[] { 34.0430058, -118.2673597 };
+        }
+
+        [HttpGet("Twilio/{id}")]
+        public async Task<IActionResult> SendTwilioCode(int id)
+        {
+            try
+            {
+                var trip = await _context.Trips.Where(t => t.Id == id).SingleOrDefaultAsync();
+                if (trip == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).SingleOrDefaultAsync();
+                    TwilioText.SendTextToDriver(Secrets.MY_PHONE_NUMBER, vehicle.DoorKey);
+                    return Ok();
+                }
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
+
         [HttpGet("DuringTrip/{id}")]
         public async Task<IActionResult> GetDuringTrip(int id)
         {
@@ -95,7 +127,7 @@ namespace CarRentalService.Controllers
             }
         }
         [HttpPut("ConfirmLocation/{id}")]
-        public async Task<IActionResult> ConfirmLocation(int id, [FromForm] string value)
+        public async Task<IActionResult> ConfirmLocation(int id, [FromBody] ConfirmLocation location)
         {
             return NotFound();
         }
@@ -105,7 +137,7 @@ namespace CarRentalService.Controllers
             return NotFound();
         }
         [HttpPut("SetStatus/{id}")]
-        public async Task<IActionResult> SetStatus(int id, [FromForm] string value)
+        public async Task<IActionResult> SetStatus(int id, [FromBody] CheckStatus status)
         {
             return NotFound();
         }
@@ -114,8 +146,8 @@ namespace CarRentalService.Controllers
         {
             return NotFound();
         }
-        [HttpPut("TakePictures/{id}")]
-        public async Task<IActionResult> TakePictures(int id, [FromForm] string value)
+        [HttpPut("TakePictures/{id}/{image}")]
+        public async Task<IActionResult> TakePictures(int id, string image, [FromForm] IFormFile file)
         {
             return NotFound();
         }

@@ -47,13 +47,13 @@ function getDuringTrip() {
 function handleDuringTrip(values) {
     $("#MainArea").empty();
     let rows = [];
-    rows.push("<div>Enjoy your trip</div>");
+    rows.push("<div>Enjoy your trip!</div>");
+    rows.push("<div class='btn btn-primary' onclick='twilioRequest()'>Get Your Access Code</div>");
     rows.push(`<div>Destination: ${values.destination}</div>`);
     rows.push(`<div>Estimated Time to arrival: ${values.estimatedTime} minutes</div>`);
     rows.push("<div>Estimated Cost: $" + `${values.estimatedTime} dollars </div>`);
     rows.push(`<div>Map coordinates: Lng: ${values.lng}, lat: ${values.lat} </div>`);
     rows.push("<div class='btn btn-primary' onclick='endTripButton()'>End Trip</div>");
-    rows.push("<div class='btn btn-primary' onclick='completeTripButton()'>Skip to End</div>");
     $("#MainArea").html(rows.join(""));
 }
 
@@ -202,6 +202,20 @@ function completeTrip() {
         success: function (result, textStatus, jQxhr) {
             alert("Trip ended");
             window.location.assign("Index");
+        },
+        error: function (jqXhr, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+
+function twilioRequest() {
+    var id = $('#TripStatus').attr("data-id");
+    $.ajax({
+        url: 'https://localhost:44303/api/Trip/Twilio/' + id,
+        type: 'Get',
+        success: function (result, textStatus, jQxhr) {
+            alert("Door Key Access Code Sent to Phone");
         },
         error: function (jqXhr, textStatus, errorThrown) {
             console.log(errorThrown);
