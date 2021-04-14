@@ -1,0 +1,46 @@
+﻿@model CarRentalService.Models.ServiceReceipt
+
+@{
+    ViewData["Title"] = "Service Receipt Completed";
+}
+
+<h1>Service Receipt Completed</h1>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col">
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+        <dd class="col">
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+        <dt class="col">
+            @Html.DisplayNameFor(model => model.EndTime)
+        </dt>
+        <dd class="col">
+            @Html.DisplayFor(model => model.EndTime)
+        </dd>
+        <dt class="col">
+            Vehicle
+        </dt>
+        <dd class="col">
+            @Model.Vehicle.Year @Model.Vehicle.Make @Model.Vehicle.Model
+        </dd>
+        <dt class="col">
+            Employee Name
+        </dt>
+        <dd class="col">
+            @Model.Employee.FirstName @Model.Employee.LastName
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

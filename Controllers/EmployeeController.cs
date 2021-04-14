@@ -123,14 +123,15 @@ namespace CarRentalService.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> StartService(IssueSRVehicleVM issueSRVehicleVM)
+        public async Task<IActionResult> StartService(ServiceReceipt serviceReceipt)
         {
-            TwilioText.SendTextToDriver(Secrets.MY_PHONE_NUMBER, issueSRVehicleVM.Vehicle.DoorKey);
+            Vehicle vehicle = _context.Vehicles.Where(v => v.Id == serviceReceipt.VehicleId).FirstOrDefault();
 
-            _context.Vehicles.Where(v => v.Id == issueSRVehicleVM.Vehicle.Id).FirstOrDefault().IsAvailable = false;
+            TwilioText.SendTextToDriver(Secrets.MY_PHONE_NUMBER, vehicle.DoorKey);
 
-            issueSRVehicleVM.ServiceReceipt.StartTime = DateTime.Now;
-            _context.ServiceReceipts.Add(issueSRVehicleVM.ServiceReceipt);
+            vehicle.IsAvailable = false;
+            serviceReceipt.StartTime = DateTime.Now;
+            _context.ServiceReceipts.Add(serviceReceipt);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
