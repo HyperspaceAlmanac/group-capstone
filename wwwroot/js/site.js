@@ -19,8 +19,8 @@ function handleStatus() {
         case 'CheckStatus':
             handleCheckStatus();
             break;
-        case 'TakePictures':
-            takePictures();
+        case 'TakePhotos':
+            takePhotos();
             break;
         default:
             getDuringTrip();
@@ -113,11 +113,11 @@ function handleCheckStatus(values) {
 function handleTakePictures(values) {
     $("#MainArea").empty();
     let rows = [];
-    rows.push("<div>Please Upload Pictures of the Vehicle</div>");
+    rows.push("<div>Please Upload Photos of the Vehicle</div>");
     $("#MainArea").html(rows.join(""));
 }
 
-function takePictures() {
+function takePhotos() {
     var id = $('#TripStatus').attr("data-id");
     $.ajax({
         url: 'https://localhost:44303/api/Trip/TakePhotos/' + id,
@@ -132,7 +132,7 @@ function takePictures() {
         }
     });
 }
-function putTakePictures() {
+function putTakePhotos() {
     var id = $('#TripStatus').attr("data-id");
     $.ajax({
         url: 'https://localhost:44303/api/Trip/TakePhotos/' + id,

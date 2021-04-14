@@ -231,7 +231,7 @@ namespace CarRentalService.Controllers
                     trip.OdometerEnd = status.Odometer;
                     await ReportIssues(status, trip.VehicleId);
                     _context.Update(trip);
-                    trip.TripStatus = "TakePictures";
+                    trip.TripStatus = "TakePhotos";
                     await _context.SaveChangesAsync();
                     return Ok();
                 }
