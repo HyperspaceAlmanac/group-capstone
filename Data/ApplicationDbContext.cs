@@ -168,6 +168,47 @@ namespace CarRentalService.Data
                             IsOperational = true
                         }
                  );
+            builder.Entity<IdentityUser>()
+                .HasData(
+                new IdentityUser
+                {
+                    Id = "638492af-3493-4c74-9b59-0e9313fe2a21",
+                    UserName = "cust1@cust.com",
+                    NormalizedUserName = "CUST1@CUST.COM",
+                    Email = "cust1@cust.com",
+                    NormalizedEmail = "CUST1@CUST.COM",
+                    EmailConfirmed = false,
+                    PasswordHash = "AQAAAAEAACcQAAAAEM+ixgUo5RtM44sAtJ1WN5A5KD/HDwpJppxp4BFrKzD4fqtzcEl9DBX4gUo0rvRZBw==",
+                    SecurityStamp = "KPWNCNQP2JZBQ7NWCNUXZCJU27PT6PBE",
+                    ConcurrencyStamp = "09baa524-8bbd-4641-b6d7-3be215fa2493"
+                });
+            builder.Entity<IdentityUserRole<string>>()
+                .HasData(
+                new IdentityUserRole<string>
+                {
+                    RoleId = "ff2a00f0-9394-4ebf-9546-135cd2ab6500",
+                    UserId = "638492af-3493-4c74-9b59-0e9313fe2a21"
+                });
+
+            builder.Entity<Customer>()
+                    .HasData(
+                        new Customer
+                        {
+                            Id = 1,
+                            FirstName = "James",
+                            LastName = "Buchanan",
+                            CurrentStreet = "500 Sea World Dr",
+                            CurrentCity = "San Diego",
+                            CurrentState = "CA",
+                            CurrentZip = "92109",
+                            CurrentLat = 32.7641067,
+                            CurrentLong = -117.2262649,
+                            PhoneNumber = "+12619811234",
+                            DriverLicenseNumber = "369RR1231",
+                            TotalBalance = 0,
+                            CompletedRegistration = true,
+                            IdentityUserId = "638492af-3493-4c74-9b59-0e9313fe2a21",
+                        });
             builder.Entity<Trip>()
                     .HasData(
                         new Trip
@@ -272,7 +313,7 @@ namespace CarRentalService.Data
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Issue> Issues { get; set; }
-        public DbSet<ServiceReceipt> ServiceReceipt { get; set; }
+        public DbSet<ServiceReceipt> ServiceReceipts { get; set; }
         public DbSet<Trip> Trips { get; set; }
 
     }

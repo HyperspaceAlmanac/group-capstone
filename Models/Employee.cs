@@ -12,10 +12,15 @@ namespace CarRentalService.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Address { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string CurrentStreet { get; set; }
+        public string CurrentCity { get; set; }
+        public string CurrentState { get; set; }
+        public string CurrentZip { get; set; }
+        public double CurrentLat { get; set; }
+        public double CurrentLong { get; set; }
         public string PhoneNumber { get; set; }
-        public int Zipcode { get; set; }
         public bool CompletedRegistration { get; set; }
         [ForeignKey("IdentityUser")]
         public string IdentityUserId { get; set; }

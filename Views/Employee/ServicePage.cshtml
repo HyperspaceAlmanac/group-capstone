@@ -1,0 +1,41 @@
+﻿@model CarRentalService.Models.ServiceReceipt
+
+@{
+    ViewData["Title"] = "Service Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Current Service</h1>
+
+<div>
+    <h4>Info</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col">
+            Issue Servicing
+        </dt>
+        <dd class="col">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col">
+            Employee Name
+        </dt>
+        <dd class="col">
+            @Model.Employee.FirstName @Model.Employee.LastName
+        </dd>
+        <dt class="col">
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+        <dd class="col">
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+        <dt class="col">
+            Vehicle
+        </dt>
+        <dd class="col">
+            @Model.Vehicle.Year @Model.Vehicle.Make @Model.Vehicle.Model
+        </dd>
+    </dl>
+</div>
+<div>
+    <a type="button" asp-action="CompleteService" asp-route-id="@Model.Id">Complete Service</a> |
+</div>

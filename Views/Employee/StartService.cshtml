@@ -1,0 +1,33 @@
+﻿@model CarRentalService.ViewModels.IssueSRVehicleVM
+
+@{
+    ViewData["Title"] = "Start Servicing";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1>Start Servicing</h1>
+<div>Vehicle: @Model.Vehicle.Year @Model.Vehicle.Make @Model.Vehicle.Model</div>
+<div>Issue: @Model.Issue.ServiceNeeded</div>
+
+<hr />
+<div class="row">
+    <div >
+        <form asp-action="StartService">
+            <input type="hidden" asp-for="ServiceReceipt.Id" />
+            <input type="hidden" asp-for="ServiceReceipt.VehicleId" value="@Model.Vehicle.Id" />
+            <input type="hidden" asp-for="ServiceReceipt.EmployeeId" value="@Model.Employee.Id">
+            <input type="hidden" asp-for="ServiceReceipt.Description" value="@Model.Issue.ServiceNeeded">
+            <input type="hidden" asp-for="ServiceReceipt.IssueId" value="@Model.Issue.Id">
+
+            <div class="form-group">
+                <input type="submit" value="Service" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
