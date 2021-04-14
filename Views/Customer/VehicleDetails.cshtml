@@ -18,8 +18,10 @@
     <div class="col-6"><iframe width="500" height="300" loading="lazy" src="@ViewBag.MapUrl"></iframe></div>
     <div style="font-size: 2rem;" class="col-6">
         <div><strong>Distance:</strong> @ViewBag.Distance</div>
-        <div ><strong>Duration:</strong> @ViewBag.Duration</div>
+        <div><strong>Duration:</strong> @ViewBag.Duration</div>
         <div><strong>Estimated Cost:</strong>$@ViewBag.Cost</div>
+        <div><a asp-action="CreateTrip" class="btn btn-primary" asp-route-vehicleID="@Model.Id" asp-route-lat=@ViewBag.Lat  asp-route-lng=@ViewBag.Lng asp-route-cost="@ViewBag.Cost">Book Now</a></div>
+
     </div>
 </div>
 <div>
