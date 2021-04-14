@@ -115,10 +115,10 @@ namespace CarRentalService.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> StartService(Trip trip)
+        public async Task<IActionResult> StartService(ServiceReceipt serviceReceipt)
         {
-            trip.StartTime = DateTime.Now;
-            trip.TripStatus = "DuringTrip";
+            serviceReceipt.StartTime = DateTime.Now;
+            serviceReceipt. = "DuringTrip";
             _context.Trips.Add(trip);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
