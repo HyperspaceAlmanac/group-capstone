@@ -118,21 +118,19 @@ namespace CarRentalService.Controllers
                 
             };            
 
-            // User will confirm responsibility for vehicle servicing
-            // User gets Twillo code
             return View(iSRVViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> StartService(IssueSRVehicleVM iSRVViewModel)
+        public async Task<IActionResult> StartService(IssueSRVehicleVM issueSRVehicleVM)
         {
-            TwilioText.SendTextToDriver(Secrets.MY_PHONE_NUMBER, iSRVViewModel.Vehicle.DoorKey);
+            TwilioText.SendTextToDriver(Secrets.MY_PHONE_NUMBER, issueSRVehicleVM.Vehicle.DoorKey);
 
-            _context.Vehicles.Where(v => v.Id == iSRVViewModel.Vehicle.Id).FirstOrDefault().IsAvailable = false;
+            _context.Vehicles.Where(v => v.Id == issueSRVehicleVM.Vehicle.Id).FirstOrDefault().IsAvailable = false;
 
-            iSRVViewModel.ServiceReceipt.StartTime = DateTime.Now;
-            _context.ServiceReceipts.Add(iSRVViewModel.ServiceReceipt);
+            issueSRVehicleVM.ServiceReceipt.StartTime = DateTime.Now;
+            _context.ServiceReceipts.Add(issueSRVehicleVM.ServiceReceipt);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
@@ -157,6 +155,22 @@ namespace CarRentalService.Controllers
             ServiceReceipt serviceReceipt = await _context.ServiceReceipts.Where(sr => sr.EmployeeId == employee.Id && sr.EndTime == null).SingleOrDefaultAsync();
             serviceReceipt.Vehicle = await _context.Vehicles.Where(v => v.Id == serviceReceipt.VehicleId).SingleOrDefaultAsync();
             serviceReceipt.Employee = employee;
+
+            return View(serviceReceipt);
+        }
+        public async Task<IActionResult> CompleteService(int? id)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Employee employee = await _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            
+            ServiceReceipt serviceReceipt = await _context.ServiceReceipts.Where(sr => sr.Id == id).SingleOrDefaultAsync();
+            _context.Vehicles.Where(v => v.Id == serviceReceipt.VehicleId).FirstOrDefault().IsOperational = true;
+            _context.Vehicles.Where(v => v.Id == serviceReceipt.VehicleId).FirstOrDefault().IsAvailable = true;
+
+            serviceReceipt.EndTime = DateTime.Now;
+
+            _context.Update(serviceReceipt);
+            await _context.SaveChangesAsync();
 
             return View(serviceReceipt);
         }
