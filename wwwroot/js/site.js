@@ -110,10 +110,17 @@ function handleCheckStatus(values) {
     $("#status-form").submit(putCheckStatus);
 }
 
-function handleTakePictures(values) {
+function handleTakePhotos(values) {
     $("#MainArea").empty();
     let rows = [];
     rows.push("<div>Please Upload Photos of the Vehicle</div>");
+    rows.push("<div class='row'>");
+    rows.push("<div class='col-6'>");
+    rows.push("<img src='green.png' alt='Default gray image' class='img-responsive'");
+    rows.push("</div>");
+    rows.push("<div class='col-6'>");
+    rows.push("</div>");
+    rows.push("</div>");
     $("#MainArea").html(rows.join(""));
 }
 
@@ -125,7 +132,7 @@ function takePhotos() {
         type: 'Get',
         contentType: 'application/json',
         success: function (result, textStatus, jQxhr) {
-            handleTakePictures();
+            handleTakePhotos(result);
         },
         error: function (jqXhr, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -140,7 +147,7 @@ function putTakePhotos() {
         type: 'Put',
         contentType: 'application/json',
         success: function (result, textStatus, jQxhr) {
-            handleTakePictures();
+            handleTakePhotos();
         },
         error: function (jqXhr, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -168,7 +175,7 @@ function putCheckStatus(e) {
         contentType: 'application/json',
         data: JSON.stringify(dict),
         success: function (result, textStatus, jQxhr) {
-            takePictures();
+            takePhotos();
         },
         error: function (jqXhr, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -203,12 +210,11 @@ function putConfirmLocation(e) {
     };
     $.ajax({
         url: 'https://localhost:44303/api/Trip/ConfirmLocation/' + id,
-        dataType: 'json',
         type: 'Put',
         contentType: 'application/json',
         data: JSON.stringify(dict),
         success: function (result, textStatus, jQxhr) {
-            checkStatus();
+            handleCheckStatus();
         },
         error: function (jqXhr, textStatus, errorThrown) {
             console.log(errorThrown);

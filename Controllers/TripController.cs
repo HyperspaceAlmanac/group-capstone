@@ -19,9 +19,11 @@ namespace CarRentalService.Controllers
     public class TripController : ControllerBase
     {
         private ApplicationDbContext _context;
+        private readonly string userImagesDirectory = "..\\Images";
         public TripController(ApplicationDbContext context)
         {
             _context = context;
+            System.IO.Directory.CreateDirectory(userImagesDirectory);
         }
         // GET: api/<TripController>
         [HttpGet]
@@ -60,6 +62,25 @@ namespace CarRentalService.Controllers
         private ConfirmLocation ConvertGeoCode(double lng, double lat)
         {
             return new ConfirmLocation { Street = "1234 Street", Lat = lat, Lng = lng, City = "San Diego", State = "CA", Zipcode = 12345 };
+        }
+
+        private void FillPhotos(Trip trip, TakePhotos photos)
+        {
+            photos.BeforeTripFrontImage = trip.BeforeTripFrontImage ?? "";
+            photos.BeforeTripBackImage = trip.BeforeTripBackImage ?? "";
+            photos.BeforeTripLeftImage = trip.BeforeTripLeftImage ?? "";
+            photos.BeforeTripRightImage = trip.BeforeTripRightImage ?? "";
+            photos.BeforeTripInteriorBack = trip.BeforeTripInteriorBack ?? "";
+            photos.BeforeTripInteriorFront = trip.BeforeTripInteriorFront ?? "";
+
+            photos.Done = trip.AfterTripFrontImage == "" || trip.AfterTripBackImage == "" || trip.AfterTripLeftImage == ""
+                || trip.AfterTripRightImage == "" || trip.AfterTripInteriorFront == "" || trip.AfterTripInteriorBack == "";
+            photos.AfterTripFrontImage = trip.AfterTripFrontImage ?? "";
+            photos.AfterTripBackImage = trip.AfterTripBackImage ?? "";
+            photos.AfterTripLeftImage = trip.AfterTripLeftImage ?? "";
+            photos.AfterTripRightImage = trip.AfterTripRightImage ?? "";
+            photos.AfterTripInteriorFront = trip.AfterTripInteriorFront ?? "";
+            photos.AfterTripInteriorBack = trip.AfterTripInteriorBack ?? "";
         }
 
         [HttpGet("Twilio/{id}")]
@@ -244,7 +265,24 @@ namespace CarRentalService.Controllers
         [HttpGet("TakePhotos/{id}")]
         public async Task<IActionResult> TakePhotos(int id)
         {
-            return Ok(new TakePhotos());
+            try
+            {
+                var trip = await _context.Trips.Where(t => t.Id == id).SingleOrDefaultAsync();
+                if (trip == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    TakePhotos photos = new TakePhotos();
+                    FillPhotos(trip, photos);
+                    return Ok(photos);
+                }
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
         [HttpPut("TakePhotos/{id}/{image}")]
         public async Task<IActionResult> TakePhotos(int id, string image, [FromForm] IFormFile file)

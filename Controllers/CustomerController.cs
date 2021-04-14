@@ -140,12 +140,12 @@ namespace CarRentalService.Controllers
 
         private void GetPreviousImageURLs(Trip current, Trip prev)
         {
-            current.BeforeTripFrontImage = prev.AfterTripFrontImage;
-            current.BeforeTripBackImage = prev.AfterTripBackImage;
-            current.BeforeTripLeftImage = prev.AfterTripLeftImage;
-            current.BeforeTripRightImage = prev.AfterTripRightImage;
-            current.BeforeTripInteriorFront = prev.AfterTripInteriorFront;
-            current.BeforeTripInteriorBack = prev.AfterTripInteriorBack;
+            current.BeforeTripFrontImage = prev.AfterTripFrontImage ?? "";
+            current.BeforeTripBackImage = prev.AfterTripBackImage ?? "";
+            current.BeforeTripLeftImage = prev.AfterTripLeftImage ?? "";
+            current.BeforeTripRightImage = prev.AfterTripRightImage ?? "";
+            current.BeforeTripInteriorFront = prev.AfterTripInteriorFront ?? "";
+            current.BeforeTripInteriorBack = prev.AfterTripInteriorBack ?? "";
             current.AfterTripFrontImage = "";
             current.AfterTripBackImage = "";
             current.AfterTripLeftImage = "";

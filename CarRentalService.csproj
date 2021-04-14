@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\green.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="GoogleMapsApi" Version="0.80.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.4" />
@@ -27,6 +31,10 @@
     <Folder Include="Data\Migrations\" />
     <Folder Include="Images\" />
     <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\green.png" />
   </ItemGroup>
 
 </Project>

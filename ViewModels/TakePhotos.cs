@@ -7,6 +7,7 @@ namespace CarRentalService.ViewModels
 {
     public class TakePhotos
     {
+        public bool Done { get; set; }
         public string BeforeTripFrontImage { get; set; }
         public string BeforeTripBackImage { get; set; }
         public string BeforeTripLeftImage { get; set; }
