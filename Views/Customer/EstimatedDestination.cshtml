@@ -1,0 +1,40 @@
+﻿@model CarRentalService.Models.Customer
+
+@{
+    ViewData["Title"] = "EstimatedDestination";
+}
+
+<h1>What's your destination?</h1>
+
+<hr />
+<div>
+    <form asp-action="EstimatedDestination">
+        <div  class="row">
+            <div class="form-group col-5">
+                <input style="background-color: #DDDDDD" asp-for="DestinationStreet" placeholder="Street" class="form-control" />
+                <span asp-validation-for="DestinationStreet" class="text-danger"></span>
+            </div>
+            <div class="form-group col-4">
+                <input style="background-color: #DDDDDD" asp-for="DestinationCity" placeholder="City" class="form-control" />
+                <span asp-validation-for="DestinationCity" class="text-danger"></span>
+            </div>
+            <div class="form-group col-1">
+                <input style="background-color: #DDDDDD" asp-for="DestinationState" placeholder="State" class="form-control" />
+                <span asp-validation-for="DestinationState" class="text-danger"></span>
+            </div>
+            <div class="form-group col-2">
+                <input style="background-color: #DDDDDD" asp-for="DestinationZip" placeholder="Zip Code" class="form-control" />
+                <span asp-validation-for="DestinationZip" class="text-danger"></span>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+        </div>
+<div class="form-group">
+    <input type="submit" value="Save" class="btn btn-primary" />
+</div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

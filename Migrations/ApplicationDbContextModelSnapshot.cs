@@ -47,6 +47,18 @@ namespace CarRentalService.Migrations
                     b.Property<string>("CurrentZip")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DestinationCity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DestinationState")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DestinationStreet")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DestinationZip")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DriverLicenseNumber")
                         .HasColumnType("nvarchar(max)");
 

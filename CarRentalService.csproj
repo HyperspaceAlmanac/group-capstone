@@ -25,12 +25,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
-<<<<<<< HEAD
     <Folder Include="Images\" />
-    <Folder Include="Migrations\" />
-=======
-    <Folder Include="Views\Vehicles\" />
->>>>>>> work-on-index
   </ItemGroup>
 
 </Project>
