@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CarRentalService.ViewModels
 {
-    public class TakePictures
+    public class TakePhotos
     {
         public string BeforeTripFrontImage { get; set; }
         public string BeforeTripBackImage { get; set; }

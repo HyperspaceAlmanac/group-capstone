@@ -10,5 +10,6 @@ namespace CarRentalService.ViewModels
     {
         public int TripID { get; set; }
         public string TripStatus { get; set; }
+        public int Odometer { get; set; }
     }
 }

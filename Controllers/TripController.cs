@@ -52,10 +52,14 @@ namespace CarRentalService.Controllers
             return NotFound();
         }
 
-        private double[] GetGeoCode(string address, string city, string state, int zipcode)
+        private double[] GetGeoCode(ConfirmLocation location)
         {
             // hard code for now, API calls will eventually be service
             return new double[] { 34.0430058, -118.2673597 };
+        }
+        private ConfirmLocation ConvertGeoCode(double lng, double lat)
+        {
+            return new ConfirmLocation { Street = "1234 Street", Lat = lat, Lng = lng, City = "San Diego", State = "CA", Zipcode = 12345 };
         }
 
         [HttpGet("Twilio/{id}")]
@@ -115,10 +119,14 @@ namespace CarRentalService.Controllers
                 }
                 else
                 {
-                    trip.EndTime = DateTime.Now;
-                    _context.Update(trip);
-                    await _context.SaveChangesAsync();
-                    return Ok();
+                    if (trip.TripStatus == "DuringTrip")
+                    {
+                        trip.TripStatus = "ConfirmLocation";
+                        _context.Update(trip);
+                        await _context.SaveChangesAsync();
+                    }
+                    ConfirmLocation location = ConvertGeoCode(trip.EndLng, trip.EndLat);
+                    return Ok(location);
                 }
             }
             catch
@@ -129,25 +137,117 @@ namespace CarRentalService.Controllers
         [HttpPut("ConfirmLocation/{id}")]
         public async Task<IActionResult> ConfirmLocation(int id, [FromBody] ConfirmLocation location)
         {
-            return NotFound();
+            try
+            {
+                var trip = await _context.Trips.Where(t => t.Id == id).SingleOrDefaultAsync();
+                if (trip == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    double[] endDestination = GetGeoCode(location);
+                    trip.EndLat = endDestination[0];
+                    trip.EndLng = endDestination[1];
+                    trip.TripStatus = "CheckStatus";
+                    _context.Update(trip);
+                    await _context.SaveChangesAsync();
+                    return Ok();
+                }
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
-        [HttpGet("GetStatus/{id}")]
-        public async Task<IActionResult> GetStatus(int id)
+        private async Task<bool> ReportIssues(CheckStatus status, int vehicleId)
         {
-            return NotFound();
+            DateTime currentTime = DateTime.Now;
+            bool update = false;
+            Issue issue;
+            // Create issues to add into issues table
+            if (status.Tire)
+            {
+                issue = new Issue() { ServiceNeeded = "Tire", VehicleId = vehicleId, TimeReported = currentTime};
+                await _context.AddAsync(issue);
+                update = true;
+            }
+            if (status.BodyRepair)
+            {
+                issue = new Issue() { ServiceNeeded = "BodyRepair", VehicleId = vehicleId, TimeReported = currentTime };
+                await _context.AddAsync(issue);
+                update = true;
+            }
+            if (status.InteriorCleaning)
+            {
+                issue = new Issue() { ServiceNeeded = "InteriorCleaning", VehicleId = vehicleId, TimeReported = currentTime };
+                await _context.AddAsync(issue);
+                update = true;
+            }
+            if (status.WindowsRepair)
+            {
+                issue = new Issue() { ServiceNeeded = "Windows", VehicleId = vehicleId, TimeReported = currentTime };
+                await _context.AddAsync(issue);
+                update = true;
+            }
+            if (status.DashboardLights)
+            {
+                issue = new Issue() { ServiceNeeded = "DashboardLights", VehicleId = vehicleId, TimeReported = currentTime };
+                await _context.AddAsync(issue);
+                update = true;
+            }
+            if (status.ElectronicsRepair)
+            {
+                issue = new Issue() { ServiceNeeded = "Electronics", VehicleId = vehicleId, TimeReported = currentTime };
+                await _context.AddAsync(issue);
+                update = true;
+            }
+            if (status.Supplies)
+            {
+                issue = new Issue() { ServiceNeeded = "Supplies", VehicleId = vehicleId, TimeReported = currentTime };
+                await _context.AddAsync(issue);
+                update = true;
+            }
+            if (update)
+            {
+                await _context.SaveChangesAsync();
+            }
+            return update;
         }
-        [HttpPut("SetStatus/{id}")]
+
+        [HttpPut("CheckStatus/{id}")]
         public async Task<IActionResult> SetStatus(int id, [FromBody] CheckStatus status)
         {
-            return NotFound();
+            try
+            {
+                var trip = await _context.Trips.Where(t => t.Id == id).SingleOrDefaultAsync();
+                if (trip == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    trip.FuelEnd = status.Fuel;
+                    trip.OdometerEnd = status.Odometer;
+                    await ReportIssues(status, trip.VehicleId);
+                    _context.Update(trip);
+                    trip.TripStatus = "TakePictures";
+                    await _context.SaveChangesAsync();
+                    return Ok();
+                }
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
-        [HttpGet("TakePictures/{id}")]
-        public async Task<IActionResult> TakePictures(int id)
+        [HttpGet("TakePhotos/{id}")]
+        public async Task<IActionResult> TakePhotos(int id)
         {
-            return NotFound();
+            return Ok(new TakePhotos());
         }
-        [HttpPut("TakePictures/{id}/{image}")]
-        public async Task<IActionResult> TakePictures(int id, string image, [FromForm] IFormFile file)
+        [HttpPut("TakePhotos/{id}/{image}")]
+        public async Task<IActionResult> TakePhotos(int id, string image, [FromForm] IFormFile file)
         {
             return NotFound();
         }
