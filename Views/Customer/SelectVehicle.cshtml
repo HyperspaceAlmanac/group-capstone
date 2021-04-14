@@ -4,44 +4,67 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="row" style="padding-bottom: 2rem;">
+    <h1 class="col-6">Currently Available Vehicles:</h1>
+    <div class="col-6">
+        @using (Html.BeginForm())
+        {
+            <div>
+                @Html.TextBox("SearchString")
+                <input type="submit" class="btn btn-primary" value="Search" />
+            </div>
+        }
+    </div>
+</div>
+<div>
+    <div class="row" style="font-size: 1.5rem;">
+        <div class="col-2" style="font-variant: small-caps; font-weight: 600;">Filter By:</div>
+        @if (ViewBag.DistanceSortParam == "distance_ascending")
+        {
+            <div class="col-2">@Html.ActionLink("Distance", "SelectVehicle", new { sortOrder = "distance_descending" })</div>
+        }
+        else
+        {
+            <div class="col-2">@Html.ActionLink("Distance", "SelectVehicle", new { sortOrder = "distance_ascending" })</div>
+        }
+        @if (ViewBag.YearSortParam == "year_ascending")
+        {
+            <div class="col-2">@Html.ActionLink("Year", "SelectVehicle", new { sortOrder = "year_descending" })</div>
+        }
+        else
+        {
+            <div class="col-2">@Html.ActionLink("Year", "SelectVehicle", new { sortOrder = "year_ascending" })</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td style="display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-variant: small-caps; height: 100%;">@item.Distance miles away</td>
-            <td>
-                <img style="width:100%; max-width: 200px;" src="@Url.Content(item.Image)" />
-            </td>
-            <td style="display: flex; align-items: center; justify-content: center; height: 100%; font-variant: small-caps; font-size: 1.5rem; font-weight: 600; font-family: Verdana, Geneva, Tahoma, sans-serif;">
-                @item.Year @item.Make @item.Model
-            </td>
-            <td>
-                @if (this.User.IsInRole("Customer"))
-                {
-                    <a asp-action="CreateTrip" class="btn btn-primary" asp-route-vehicleID="@item.Id" asp-route-lat=37.7763569 asp-route-lng=-122.3972152>Book Now</a>
-                }
-                @if (this.User.IsInRole("Employee"))
-                {
-                    <a asp-action="Book" asp-route-id="@item.Id">Book</a>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                }
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        }
+        @if (ViewBag.MakeSortParam == "make_ascending")
+        {
+            <div class="col-2">@Html.ActionLink("Make", "SelectVehicle", new { sortOrder = "make_descending" })</div>
+        }
+        else
+        {
+            <div class="col-2">@Html.ActionLink("Make", "SelectVehicle", new { sortOrder = "make_ascending" })</div>
+
+        }
+        @if (ViewBag.ModelSortParam == "model_ascending")
+        {
+            <div class="col-2">@Html.ActionLink("Model", "SelectVehicle", new { sortOrder = "model_descending" })</div>
+        }
+        else
+        {
+            <div class="col-2">@Html.ActionLink("Model", "SelectVehicle", new { sortOrder = "model_ascending" })</div>
+
+        }
+        <div class="col-2"></div>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="row" style="display: flex; align-items: center; padding: 2rem 0; border-bottom: 1px solid black">
+            <div class="col-2"><img style="width:100%; max-width: 200px;" src="@Url.Content(item.Image)" /></div>
+            <div class="col-2" style="font-size: 1.5rem;">@item.Distance miles away</div>
+            <div class="col-2" style="font-size: 2rem; font-weight: 600; font-variant: small-caps">@item.Year</div>
+            <div class="col-2" style="font-size: 2rem; font-weight: 600; font-variant: small-caps">@item.Make</div>
+            <div class="col-2" style="font-size: 2rem; font-weight: 600; font-variant: small-caps">@item.Model</div>
+            <div class="col-2"><a asp-action="VehicleDetails" class="btn btn-primary" asp-route-id="@item.Id">Book Now</a></div>
+        </div>
+    }
+</div>

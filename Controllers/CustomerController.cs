@@ -50,7 +50,8 @@ namespace CarRentalService.Controllers
                 var trip = await _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefaultAsync();
                 if (trip == null)
                 {
-                    return RedirectToAction("SelectVehicle");
+                    //return RedirectToAction("SelectVehicle");
+                    return RedirectToAction("EstimatedDestination");
                 }
                 else
                 {
@@ -58,14 +59,40 @@ namespace CarRentalService.Controllers
                 }
             }
         }
-        public async Task<ActionResult> SelectVehicle()
+
+        //GET
+        public async Task<ActionResult> EstimatedDestination()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            _context.SaveChanges();
+            return View(customer);
+        }
+
+        //POST
+        [HttpPost]
+        public async Task<ActionResult> EstimatedDestination(Models.Customer customer)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var customerInDB = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            customerInDB.DestinationCity = customer.DestinationCity;
+            customerInDB.DestinationStreet = customer.DestinationStreet;
+            customerInDB.DestinationState = customer.DestinationState;
+            customerInDB.DestinationZip = customer.DestinationZip;
+            _context.SaveChanges();
+            return RedirectToAction("SelectVehicle");
+        }
+
+        public async Task<ActionResult> SelectVehicle(string sortOrder, string searchString)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+
             var vehicles = _context.Vehicles.Where(v => v.IsAvailable == true).ToList();
             string custLocation = customer.CurrentLat.ToString() + ',' + customer.CurrentLong.ToString();
 
-            //Save customer location a GeoCode request.
+            //Save customer location a GeoCode request. 
 
             for (var i = 0; i < vehicles.Count(); i++)
             {
@@ -89,17 +116,110 @@ namespace CarRentalService.Controllers
                 int distanceLength = jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Length;
                 double distance = Convert.ToDouble(jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Substring(0, distanceLength - 3));
                 vehicles[i].Distance = distance;
-
-                int durationLength = jobject.SelectToken("routes[0].legs[0].duration.text").ToString().Length;
-                double duration = Convert.ToDouble(jobject.SelectToken("routes[0].legs[0].duration.text").ToString().Substring(0, durationLength - 5));
-                vehicles[i].Duration = duration;
             }
+
             await _context.SaveChangesAsync();
-            List<Vehicle> vehiclesSorted = vehicles.OrderBy(v => v.Distance).ToList();
-            return View(vehiclesSorted);
+
+            if (!String.IsNullOrEmpty(searchString)){
+                string sSU = searchString.ToUpper();
+                vehicles = _context.Vehicles.Where(v => 
+                                                v.Make.ToUpper().Contains(sSU) || 
+                                                v.Model.ToUpper().Contains(sSU) ||
+                                                v.Year.ToString().Contains(sSU)
+                                            ).ToList();
+            }
+            else
+            {
+                switch (sortOrder)
+                {
+                    case "make_descending":
+                        vehicles = _context.Vehicles.OrderByDescending(v => v.Make).ToList();
+                        ViewBag.MakeSortParam = "make_descending";
+                        break;
+                    case "make_ascending":
+                        vehicles = _context.Vehicles.OrderBy(v => v.Make).ToList();
+                        ViewBag.MakeSortParam = "make_ascending";
+                        break;
+                    case "model_descending":
+                        vehicles = _context.Vehicles.OrderByDescending(v => v.Model).ToList();
+                        ViewBag.ModelSortParam = "model_descending";
+                        break;
+                    case "model_ascending":
+                        vehicles = _context.Vehicles.OrderBy(v => v.Model).ToList();
+                        ViewBag.ModelSortParam = "model_ascending";
+                        break;
+                    case "year_descending":
+                        vehicles = _context.Vehicles.OrderByDescending(v => v.Year).ToList();
+                        ViewBag.YearSortParam = "year_descending";
+                        break;
+                    case "year_ascending":
+                        vehicles = _context.Vehicles.OrderBy(v => v.Year).ToList();
+                        ViewBag.YearSortParam = "year_ascending";
+                        break;
+                    case "distance_descending":
+                        vehicles = _context.Vehicles.OrderByDescending(v => v.Distance).ToList();
+                        ViewBag.DistanceSortParam = "distance_descending";
+                        break;
+                    case "distance_ascending":
+                        vehicles = _context.Vehicles.OrderBy(v => v.Distance).ToList();
+                        ViewBag.DistanceSortParam = "distance_ascending";
+                        break;
+                    default:
+                        vehicles = _context.Vehicles.OrderByDescending(v => v.Distance).ToList();
+                        break;
+                }
+            }
+            //List<Vehicle> vehiclesSorted = vehicles.OrderBy(v => v.Distance).ToList();
+            return View(vehicles);
+        }
+        // GET: Vehicles/Details/5
+        public async Task<ActionResult> VehicleDetails(int id)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            var vehicle = await _context.Vehicles.Where(v => v.Id == id).SingleOrDefaultAsync();
+
+            var geoCodingEngine = GoogleMaps.Geocode;
+            GeocodingRequest geocodeRequest = new GeocodingRequest()
+            {
+                Address = $"{customer.DestinationStreet}, {customer.DestinationCity}, {customer.DestinationState} {customer.DestinationZip}",
+                ApiKey = Secrets.GOOGLE_API_KEY,
+            };
+            GeocodingResponse geocode = await geoCodingEngine.QueryAsync(geocodeRequest);
+            double lat = geocode.Results.First().Geometry.Location.Latitude;
+            double lng = geocode.Results.First().Geometry.Location.Longitude;
+            var destinationLocation = lat.ToString() + ',' + lng.ToString();
+
+
+            string url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + vehicle.Location + "&destination=" + destinationLocation + "&key=" + Secrets.GOOGLE_API_KEY;
+            HttpClient client = new HttpClient();
+            HttpResponseMessage response = await client.GetAsync(url);
+            string jsonResult = await response.Content.ReadAsStringAsync();
+            JObject jobject = JObject.Parse(jsonResult);
+            int distanceLength = jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Length;
+            double distance = Convert.ToDouble(jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Substring(0, distanceLength - 3));
+
+            @ViewBag.Distance = distance.ToString() + "miles";
+            @ViewBag.MapUrl = $"https://www.google.com/maps/embed/v1/directions?key=" + Secrets.GOOGLE_API_KEY + "&origin=" + vehicle.Location + "&destination=" + destinationLocation;
+            @ViewBag.Duration = jobject.SelectToken("routes[0].legs[0].duration.text").ToString();
+            @ViewBag.Cost = 49.99 + (distance - 100) * .25;
+            ViewBag.Lat = lat;
+            ViewBag.Lng = lng;
+
+            return View(vehicle);
+
         }
 
-        public async Task<ActionResult> CreateTrip(int vehicleID, double lng, double lat)
+        //POST
+        [HttpPost]
+        public async Task<ActionResult> VehicleDetails(Vehicle vehicle)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            return View(vehicle);
+        }
+
+        public async Task<ActionResult> CreateTrip(int vehicleID, double lng, double lat, double cost)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
@@ -113,7 +233,7 @@ namespace CarRentalService.Controllers
                 GetPreviousImageURLs(newTrip, prevTrip);
             }
             // Estimated cost
-            newTrip.Cost = 10.50;
+            newTrip.Cost = cost;
             newTrip.EndLat = lat;
             newTrip.EndLng = lng;
             // User will confirm car is in good condition (guaranteed to be)

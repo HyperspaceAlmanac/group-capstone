@@ -24,6 +24,11 @@ namespace CarRentalService.Models
         public string DriverLicenseNumber { get; set; }
         public int TotalBalance { get; set; }
         public bool CompletedRegistration { get; set; }
+        public string? DestinationStreet { get; set; }
+        public string? DestinationCity { get; set; }
+        public string? DestinationState { get; set; }
+        public string? DestinationZip { get; set; }
+
         [ForeignKey("IdentityUser")]
         public string IdentityUserId { get; set; }
         public IdentityUser IdentityUser { get; set; }
