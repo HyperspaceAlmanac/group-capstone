@@ -22,5 +22,9 @@ namespace CarRentalService.Models
         [ForeignKey(nameof(Employee))]
         public int EmployeeId { get; set; }
         public Employee Employee { get; set; }
+
+        [ForeignKey(nameof(Issue))]
+        public int IssueId { get; set; }
+        public Issue Issue { get; set; }
     }
 }
