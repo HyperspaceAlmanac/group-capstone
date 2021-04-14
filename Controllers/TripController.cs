@@ -19,7 +19,7 @@ namespace CarRentalService.Controllers
     public class TripController : ControllerBase
     {
         private ApplicationDbContext _context;
-        private readonly string userImagesDirectory = "..\\Images";
+        private readonly string userImagesDirectory = "..\\wwwroot\\Images";
         public TripController(ApplicationDbContext context)
         {
             _context = context;

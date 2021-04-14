@@ -116,7 +116,7 @@ function handleTakePhotos(values) {
     rows.push("<div>Please Upload Photos of the Vehicle</div>");
     rows.push("<div class='row'>");
     rows.push("<div class='col-6'>");
-    rows.push("<img src='green.png' alt='Default gray image' class='img-responsive'");
+    rows.push("<img src='~/Images/green.png' alt='Default gray image' class='img-responsive'");
     rows.push("</div>");
     rows.push("<div class='col-6'>");
     rows.push("</div>");
