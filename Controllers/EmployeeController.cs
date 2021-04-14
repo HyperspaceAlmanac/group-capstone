@@ -162,8 +162,11 @@ namespace CarRentalService.Controllers
         public async Task<IActionResult> CompleteService(int? id)
         {
             ServiceReceipt serviceReceipt = await _context.ServiceReceipts.Where(sr => sr.Id == id).SingleOrDefaultAsync();
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Employee employee = await _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+
             serviceReceipt.EndTime = DateTime.Now;
-            
+            serviceReceipt.Employee = employee;
             _context.Issues.Where(i => i.Id == serviceReceipt.IssueId).FirstOrDefault().Resolved = true;
             _context.Vehicles.Where(v => v.Id == serviceReceipt.VehicleId).FirstOrDefault().IsOperational = true;
             _context.Vehicles.Where(v => v.Id == serviceReceipt.VehicleId).FirstOrDefault().IsAvailable = true;
