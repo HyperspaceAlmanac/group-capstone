@@ -15,6 +15,7 @@ using GoogleMapsApi;
 using CarRentalService.ViewModels;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
+using CarRentalService.TwilioSend;
 
 namespace CarRentalService.Controllers
 {
@@ -90,68 +91,64 @@ namespace CarRentalService.Controllers
             return View(vehiclesSorted);
         }
 
-        public async Task<ActionResult> StartService(int vehicleID, double lng, double lat)
+        public async Task<ActionResult> StartService(int vehicleID, int issueID)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var employee = await _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
-            var vehicle = await _context.Vehicles.Where(v => v.Id == vehicleID).SingleOrDefaultAsync();
-
-            ServiceReceipt serviceReceipt = PopulateTrip(employee, vehicle);
-            
-            // Assuming that vehicle always has one trip where it is placed.
-            var prevTrip = await _context.Trips.Where(t => t.VehicleId == vehicle.Id).OrderBy(t => t.EndTime).LastOrDefaultAsync();
-            if (prevTrip != null)
+            Employee employee = await _context.Employees.Where(c => c.IdentityUserId == userId).FirstOrDefaultAsync();
+            Vehicle vehicle = await _context.Vehicles.Where(v => v.Id == vehicleID).FirstOrDefaultAsync();
+            Issue issue = await _context.Issues.Where(i => i.Id == issueID).FirstOrDefaultAsync();
+           
+            ServiceReceipt serviceReceipt = PopulateServiceReceipt(employee.Id, vehicle.Id, issue.ServiceNeeded);
+            IssueSRVehicleVM iSRVViewModel = new()
             {
-                GetPreviousImageURLs(newTrip, prevTrip);
-            }
-            // Estimated cost
-            newTrip.Cost = 10.50;
-            newTrip.EndLat = lat;
-            newTrip.EndLng = lng;
+                Employee = employee,
+                Vehicle = vehicle,
+                Issue = issue,
+                ServiceReceipt = serviceReceipt
+                
+            };            
+
             // User will confirm car is in good condition (guaranteed to be)
             // User gets Twillo code
-            return View(newTrip);
+            return View(iSRVViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> StartService(ServiceReceipt serviceReceipt)
+        public async Task<IActionResult> StartService(IssueSRVehicleVM iSRVViewModel)
         {
-            serviceReceipt.StartTime = DateTime.Now;
-            serviceReceipt. = "DuringTrip";
-            _context.Trips.Add(trip);
+            TwilioText.SendTextToDriver(Secrets.MY_PHONE_NUMBER, iSRVViewModel.Vehicle.DoorKey);
+
+            _context.Vehicles.Where(v => v.Id == iSRVViewModel.Vehicle.Id).FirstOrDefault().IsAvailable = false;
+
+            iSRVViewModel.ServiceReceipt.StartTime = DateTime.Now;
+            _context.ServiceReceipts.Add(iSRVViewModel.ServiceReceipt);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        private ServiceReceipt PopulateTrip(Models.Employee employee, Vehicle vehicle)
+        private ServiceReceipt PopulateServiceReceipt(int employeeId, int vehicleId, string issueServiceNeeded)
         {
-            ServiceReceipt trip = new ()
+            ServiceReceipt serviceReceipt = new ()
             {
-                CustomerId = customer.Id,
-                Customer = customer,
-                VehicleId = vehicle.Id,
-                Vehicle = vehicle,
-                StartLng = vehicle.LastKnownLongitude.Value,
-                StartLat = vehicle.LastKnownLatitude.Value,
-                OdometerStart = vehicle.Odometer,
-                FuelStart = vehicle.Fuel
+                EmployeeId = employeeId,
+                VehicleId = vehicleId,
+                Description = issueServiceNeeded,
             };
-            return trip;
+            return serviceReceipt;
         }
 
         public async Task<IActionResult> IssuePage()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var employee = await _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            Employee employee = await _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
             
-            // Service Recept filled out. Start, end
-            var issue = await _context.ServiceReceipts.Where(sr => sr.EmployeeId == employee.Id && sr.EndTime == null).SingleOrDefaultAsync();
+            // Service Receipt filled out. Start, end
+            ServiceReceipt serviceReceipt = await _context.ServiceReceipts.Where(sr => sr.EmployeeId == employee.Id && sr.EndTime == null).SingleOrDefaultAsync();
 
             // Trip start values:
             // IsOperational = False.
-            var tripValues = new TripViewModel { TripID = trip.Id, TripStatus = trip.TripStatus };
 
-            return View(tripValues);
+            return View(serviceReceipt);
         }
         //------------------------------------CRUD Below ------------------------------------------------------------
         public async Task<IActionResult> Edit()
