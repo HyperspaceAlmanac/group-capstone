@@ -14,30 +14,42 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="IdentityUserId" />
+
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CurrentStreet" class="control-label"></label>
+                <input asp-for="CurrentStreet" class="form-control" />
+                <span asp-validation-for="CurrentStreet" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CurrentCity" class="control-label"></label>
+                <input asp-for="CurrentCity" class="form-control" />
+                <span asp-validation-for="CurrentCity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CurrentState" class="control-label"></label>
+                <input asp-for="CurrentState" class="form-control" />
+                <span asp-validation-for="CurrentState" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CurrentZip" class="control-label"></label>
+                <input asp-for="CurrentZip" class="form-control" />
+                <span asp-validation-for="CurrentZip" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PhoneNumber" class="control-label"></label>
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Zipcode" class="control-label"></label>
-                <input asp-for="Zipcode" class="form-control" />
-                <span asp-validation-for="Zipcode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdentityUserId" class="control-label"></label>
-                <select asp-for="IdentityUserId" class="form-control" asp-items="ViewBag.IdentityUserId"></select>
-                <span asp-validation-for="IdentityUserId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
