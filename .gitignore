@@ -353,7 +353,8 @@ MigrationBackup/
 Secrets.cs
 
 # Folder to hold images
-wwwwroot/Images/
+
+wwwroot/Images/
 
 # Migration folder
 Migrations/

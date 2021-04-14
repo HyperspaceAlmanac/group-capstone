@@ -24,7 +24,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\" />
+    <Folder Include="Data\Migrations\" />
+    <Folder Include="wwwroot\Images\" />
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Images\BackDefault.png" />
+    <None Include="wwwroot\Images\FrontDefault.png" />
+    <None Include="wwwroot\Images\green.png" />
+    <None Include="wwwroot\Images\image.txt" />
+    <None Include="wwwroot\Images\InteriorBackDefault.png" />
+    <None Include="wwwroot\Images\InteriorFrontDefault.png" />
+    <None Include="wwwroot\Images\LeftDefault.png" />
+    <None Include="wwwroot\Images\RightDefault.png" />
   </ItemGroup>
 
 </Project>
