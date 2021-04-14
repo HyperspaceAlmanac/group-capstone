@@ -120,28 +120,28 @@ function handleTakePhotos(values) {
     if (hideFinishTripButton) {
         rows.push("<div>Finish Trip option will appear when all photos are uploaded</div>");
     } else {
-        rows.push("<div class='btn btn-primary'>Finish Trip</div>");
+        rows.push("<div class='btn btn-primary' onclick='completeTrip()'>Finish Trip</div>");
     }
     rows.push("<div class='row'>");
     rows.push("<div class='col-6'>");
     rows.push("<div>Before Trip Photo of Front</div>");
     temp = values.beforeTripFrontImage !== "" ? values.beforeTripFrontImage : "FrontDefault.png";
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Before Trip Photo of Back</div>");
     temp = values.beforeTripBackImage !== "" ? values.beforeTripBackImage : "BackDefault.png";
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Before Trip Photo of Left</div>");
     temp = values.beforeTripLeftImage !== "" ? values.beforeTripLeftImage : "LeftDefault.png";
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Before Trip Photo of Right</div>");
     temp = values.beforeTripRightImage !== "" ? values.beforeTripRightImage : "RightDefault.png";
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Before Trip Photo of Front Interior</div>");
     temp = values.beforeTripInteriorFront !== "" ? values.beforeTripInteriorFrontImage : "InteriorFrontDefault.png";
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Before Trip Photo of Back Interior</div>");
     temp = values.beforeTripInteriorBack !== "" ? values.beforeTripInteriorBackImage : "InteriorBackDefault.png";
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("</div>");
     rows.push(`<div class='col-6'>`);
 
@@ -151,49 +151,61 @@ function handleTakePhotos(values) {
     temp = values.afterTripFrontImage !== "" ? values.afterTripFrontImage : "FrontDefault.png";
     photoType = "front";
     photoTypes.push(photoType);
-    rows.push(`<form id="photo-${photoType}>`);
+    rows.push(`<form id="photo-${photoType}">`);
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
+    rows.push("</form>");
+    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Photo of Back of Vehicle</div>");
     temp = values.afterTripBackImage !== "" ? values.afterTripBackImage : "BackDefault.png";
     photoType = "back";
     photoTypes.push(photoType);
-    rows.push(`<form id="photo-${photoType}>`);
+    rows.push(`<form id="photo-${photoType}">`);
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
+    rows.push("</form>");
+    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Photo of Left Side of Vehicle</div>");
     temp = values.afterTripLeftImage !== "" ? values.afterTripLeftImage : "LeftDefault.png";
     photoType = "left";
     photoTypes.push(photoType);
-    rows.push(`<form id="photo-${photoType}>`);
+    rows.push(`<form id="photo-${photoType}">`);
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
+    rows.push("</form>");
+    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Photo of Right Side of Vehicle</div>");
     temp = values.afterTripRightImage !== "" ? values.afterTripRightImage : "RightDefault.png";
     photoType = "right";
     photoTypes.push(photoType);
-    rows.push(`<form id="photo-${photoType}>`);
+    rows.push(`<form id="photo-${photoType}">`);
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
+    rows.push("</form>");
+    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Photo of Front Interior of Vehicle</div>");
-    temp = values.afterTripInteriorFront !== "" ? values.afterTripInteriorFrontImage : "InteriorFrontDefault.png";
+    temp = values.afterTripInteriorFront !== "" ? values.afterTripInteriorFront : "InteriorFrontDefault.png";
     photoType = "interiorFront";
     photoTypes.push(photoType);
-    rows.push(`<form id="photo-${photoType}>`);
+    rows.push(`<form id="photo-${photoType}">`);
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
+    rows.push("</form>");
+    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Photo of Back Interior of Vehicle</div>");
-    temp = values.afterTripInteriorBack !== "" ? values.afterTripInteriorBackImage : "InteriorBackDefault.png";
+    temp = values.afterTripInteriorBack !== "" ? values.afterTripInteriorBack : "InteriorBackDefault.png";
     photoType = "interiorBack";
     photoTypes.push(photoType);
-    rows.push(`<form id="photo-${photoType}>`);
+    rows.push(`<form id="photo-${photoType}">`);
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
-    rows.push(`<img src='../Images/${temp}' alt='Default gray image' class='img-responsive'>`);
+    rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
+    rows.push("</form>");
+    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("</div>");
     rows.push("</div>");
 
     $("#MainArea").html(rows.join(""));
-    photoTypes.forEach(strVal => $("photo-" + strVal).submit(generatePhotoupload(strVal)));
+    photoTypes.forEach(strVal => $("#photo-" + strVal).submit(generatePhotoUpload(strVal)));
 }
 
 function takePhotos() {
@@ -222,6 +234,11 @@ function generatePhotoUpload(photoType) {
             alert("No file selected. Please Try again");
             return;
         }
+        if (file_data.type !== "image/png") {
+            alert("Please only upload images in .png format");
+            return;
+        }
+        formData.append("file", file_data);
         $.ajax({
             url: 'https://localhost:44303/api/Trip/TakePhotos/' + photoType + "/" + id,
             type: "Put",
@@ -312,11 +329,10 @@ function completeTrip() {
     var id = $('#TripStatus').attr("data-id");
     $.ajax({
         url: 'https://localhost:44303/api/Trip/CompleteTrip/' + id,
-        dataType: 'json',
         type: 'Get',
         contentType: 'application/json',
         success: function (result, textStatus, jQxhr) {
-            alert("Trip ended");
+            alert("Thank you for using the Car Rental Service!");
             window.location.assign("Index");
         },
         error: function (jqXhr, textStatus, errorThrown) {

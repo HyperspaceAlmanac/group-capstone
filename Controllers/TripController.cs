@@ -19,11 +19,15 @@ namespace CarRentalService.Controllers
     public class TripController : ControllerBase
     {
         private ApplicationDbContext _context;
-        private readonly string userImagesDirectory = "..\\wwwroot\\Images";
+        private readonly string _userImagesDirectory = "wwwroot\\Images";
+        private List<string> _photoTypes;
         public TripController(ApplicationDbContext context)
         {
             _context = context;
-            System.IO.Directory.CreateDirectory(userImagesDirectory);
+            System.IO.Directory.CreateDirectory(_userImagesDirectory);
+            System.IO.Directory.CreateDirectory(_userImagesDirectory + "\\Before");
+            System.IO.Directory.CreateDirectory(_userImagesDirectory + "\\After");
+            _photoTypes = new List<string>() { "front", "back", "left", "right", "interiorFront", "interiorBack" };
         }
         // GET: api/<TripController>
         [HttpGet]
@@ -284,10 +288,62 @@ namespace CarRentalService.Controllers
                 return StatusCode(500);
             }
         }
-        [HttpPut("TakePhotos/{id}/{image}")]
-        public async Task<IActionResult> TakePhotos(int id, string image, [FromForm] IFormFile file)
+        [HttpPut("TakePhotos/{imageType}/{id}")]
+        public async Task<IActionResult> TakePhotos(string imageType, int id, [FromForm] IFormFile file)
         {
-            return NotFound();
+            try
+            {
+                var trip = await _context.Trips.Where(t => t.Id == id).SingleOrDefaultAsync();
+                if (trip == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    var fileName = $"{imageType}.{trip.VehicleId}.png";
+                    await SaveImage(trip, fileName, file, imageType);
+
+
+                    _context.SaveChanges();
+                    return StatusCode(200);
+                }
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
+        private async Task<bool> SaveImage(Trip trip, string fileName, IFormFile file, string imgType) {
+            using (var stream = System.IO.File.Create(_userImagesDirectory + "\\after\\" + fileName))
+            {
+                await file.CopyToAsync(stream);
+                stream.Close();
+            }
+            switch (imgType)
+            {
+                case "front":
+                    trip.AfterTripFrontImage = fileName;
+                    break;
+                case "back":
+                    trip.AfterTripBackImage = fileName;
+                    break;
+                case "left":
+                    trip.AfterTripLeftImage = fileName;
+                    break;
+                case "right":
+                    trip.AfterTripRightImage = fileName;
+                    break;
+                case "interiorFront":
+                    trip.AfterTripInteriorFront = fileName;
+                    break;
+                case "interiorBack":
+                    trip.AfterTripInteriorBack = fileName;
+                    break;
+                default:
+                    break;
+            }
+            return true;
         }
         // PUT api/UpdateTrip/<TripController>/5
         [HttpGet("CompleteTrip/{id}")]
@@ -302,18 +358,37 @@ namespace CarRentalService.Controllers
                 }
                 else
                 {
+                    trip.TripStatus = "Completed";
                     trip.EndTime = DateTime.Now;
+                    ShiftPhotos(trip);
                     _context.Update(trip);
                     await _context.SaveChangesAsync();
                     return Ok();
                 }
             }
-            catch
+            catch (System.IO.IOException)
             {
                 return StatusCode(500);
             }
         }
-
-
+        private void ShiftPhotos(Trip trip)
+        {
+            trip.AfterTripFrontImage = "";
+            trip.AfterTripBackImage = "";
+            trip.AfterTripLeftImage = "";
+            trip.AfterTripRightImage = "";
+            trip.AfterTripInteriorFront = "";
+            trip.AfterTripInteriorBack = "";
+            string source;
+            string destination;
+            int id = trip.VehicleId;
+            foreach (string s in _photoTypes)
+            {
+                source = _userImagesDirectory + $"\\After\\{s}.{id}.png";
+                destination = _userImagesDirectory + $"\\Before\\{s}.{id}.png";
+                System.IO.File.Delete(destination);
+                System.IO.File.Move(source, destination);
+            }
+        }
     }
 }

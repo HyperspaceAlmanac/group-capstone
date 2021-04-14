@@ -164,7 +164,7 @@ namespace CarRentalService.Controllers
 
             // Trip start values:
             // IsOperational = False.
-            var tripValues = new TripViewModel {TripID = trip.Id, TripStatus = trip.TripStatus, Odometer = trip.OdometerStart};
+            var tripValues = new TripViewModel {TripID = trip.Id, VehicleID = trip.VehicleId, TripStatus = trip.TripStatus, Odometer = trip.OdometerStart};
 
             return View(tripValues);
             
