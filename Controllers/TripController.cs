@@ -77,6 +77,31 @@ namespace CarRentalService.Controllers
         {
             return NotFound();
         }
+        // PUT api/UpdateTrip/<TripController>/5
+        [HttpPut("CompleteTrip/{id}")]
+        public async Task<IActionResult> CompleteTrip(int id, [FromBody] TripViewModel model)
+        {
+            try
+            {
+                var trip = await _context.Trips.Where(t => t.Id == id).SingleOrDefaultAsync();
+                if (trip == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    trip.EndTime = DateTime.Now;
+                    _context.Update(trip);
+                    await _context.SaveChangesAsync();
+                    return Ok(new TripViewModel());
+                }
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
 
     }
 }

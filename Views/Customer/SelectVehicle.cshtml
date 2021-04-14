@@ -31,7 +31,7 @@
             <td>
                 @if (this.User.IsInRole("Customer"))
                 {
-                    <a asp-action="Book" class="btn btn-primary" asp-route-id="@item.Id">Book Now</a>
+                    <a asp-action="CreateTrip" class="btn btn-primary" asp-route-vehicleID="@item.Id" asp-route-lat=37.7763569 asp-route-lng=-122.3972152>Book Now</a>
                 }
                 @if (this.User.IsInRole("Employee"))
                 {
