@@ -8,7 +8,19 @@
 
 <div class="row">
     <div class="col-6"><img style="width:100%;" src="@Url.Content(@Model.Image)" /></div>
-    <div class="col-6"><img src="@ViewBag.MapUrl" /></div>
+    <div style="font-size: 2rem;" class="col-6">
+        <div><strong>Odometer:</strong> @Model.Odometer</div>
+        <div><strong>Fuel:</strong> @Model.Fuel</div>
+        <div><strong>Cost:</strong> $49.99 + $0.25 per mile over 100 miles</div>
+    </div>
+</div>
+<div class="row" style="padding-top: 5rem;">
+    <div class="col-6"><iframe width="500" height="300" loading="lazy" src="@ViewBag.MapUrl"></iframe></div>
+    <div style="font-size: 2rem;" class="col-6">
+        <div><strong>Distance:</strong> @ViewBag.Distance</div>
+        <div ><strong>Duration:</strong> @ViewBag.Duration</div>
+        <div><strong>Estimated Cost:</strong>$@ViewBag.Cost</div>
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

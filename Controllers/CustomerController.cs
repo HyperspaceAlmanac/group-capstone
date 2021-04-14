@@ -50,7 +50,8 @@ namespace CarRentalService.Controllers
                 var trip = await _context.Trips.Where(trip => trip.CustomerId == customer.Id && trip.EndTime == null).SingleOrDefaultAsync();
                 if (trip == null)
                 {
-                    return RedirectToAction("SelectVehicle");
+                    //return RedirectToAction("SelectVehicle");
+                    return RedirectToAction("EstimatedDestination");
                 }
                 else
                 {
@@ -58,6 +59,31 @@ namespace CarRentalService.Controllers
                 }
             }
         }
+
+        //GET
+        public async Task<ActionResult> EstimatedDestination()
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            _context.SaveChanges();
+            return View(customer);
+        }
+
+        //POST
+        [HttpPost]
+        public async Task<ActionResult> EstimatedDestination(Models.Customer customer)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var customerInDB = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            customerInDB.DestinationCity = customer.DestinationCity;
+            customerInDB.DestinationStreet = customer.DestinationStreet;
+            customerInDB.DestinationState = customer.DestinationState;
+            customerInDB.DestinationZip = customer.DestinationZip;
+            _context.SaveChanges();
+            return RedirectToAction("SelectVehicle");
+        }
+
         public async Task<ActionResult> SelectVehicle()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -78,6 +104,7 @@ namespace CarRentalService.Controllers
                 GeocodingResponse geocode = await geoCodingEngine.QueryAsync(geocodeRequest);
                 vehicles[i].LastKnownLatitude = geocode.Results.First().Geometry.Location.Latitude;
                 vehicles[i].LastKnownLongitude = geocode.Results.First().Geometry.Location.Longitude;
+                _context.Update(vehicles[i]);
                 vehicles[i].Location = vehicles[i].LastKnownLatitude.ToString() + ',' + vehicles[i].LastKnownLongitude.ToString();
 
                 string url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + custLocation + "&destination=" + vehicles[i].Location + "&key=" + Secrets.GOOGLE_API_KEY;
@@ -89,12 +116,58 @@ namespace CarRentalService.Controllers
                 double distance = Convert.ToDouble(jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Substring(0, distanceLength - 3));
                 vehicles[i].Distance = distance;
 
-                int durationLength = jobject.SelectToken("routes[0].legs[0].duration.text").ToString().Length;
-                double duration = Convert.ToDouble(jobject.SelectToken("routes[0].legs[0].duration.text").ToString().Substring(0, durationLength - 5));
-                vehicles[i].Duration = duration;
+                //int durationLength = jobject.SelectToken("routes[0].legs[0].duration.text").ToString().Length;
+                //string duration = jobject.SelectToken("routes[0].legs[0].duration.text").ToString();
+                //vehicles[i].Duration = duration;
             }
+            await _context.SaveChangesAsync();
             List<Vehicle> vehiclesSorted = vehicles.OrderBy(v => v.Distance).ToList();
             return View(vehiclesSorted);
+        }
+        // GET: Vehicles/Details/5
+        public async Task<ActionResult> VehicleDetails(int id)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            var vehicle = await _context.Vehicles.Where(v => v.Id == id).SingleOrDefaultAsync();
+
+            var geoCodingEngine = GoogleMaps.Geocode;
+            GeocodingRequest geocodeRequest = new GeocodingRequest()
+            {
+                Address = $"{customer.DestinationStreet}, {customer.DestinationCity}, {customer.DestinationState} {customer.DestinationZip}",
+                ApiKey = Secrets.GOOGLE_API_KEY,
+            };
+            GeocodingResponse geocode = await geoCodingEngine.QueryAsync(geocodeRequest);
+            double lat = geocode.Results.First().Geometry.Location.Latitude;
+            double lng = geocode.Results.First().Geometry.Location.Longitude;
+            var destinationLocation = lat.ToString() + ',' + lng.ToString();
+
+
+            string url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + vehicle.Location + "&destination=" + destinationLocation + "&key=" + Secrets.GOOGLE_API_KEY;
+            HttpClient client = new HttpClient();
+            HttpResponseMessage response = await client.GetAsync(url);
+            string jsonResult = await response.Content.ReadAsStringAsync();
+            JObject jobject = JObject.Parse(jsonResult);
+            int distanceLength = jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Length;
+            double distance = Convert.ToDouble(jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Substring(0, distanceLength - 3));
+
+            @ViewBag.Distance = distance.ToString() + "miles";
+            @ViewBag.MapUrl = $"https://www.google.com/maps/embed/v1/directions?key=" + Secrets.GOOGLE_API_KEY + "&origin=" + vehicle.Location + "&destination=" + destinationLocation;
+            @ViewBag.Duration = jobject.SelectToken("routes[0].legs[0].duration.text").ToString();
+            @ViewBag.Cost = 49.99 + (distance - 100) * .25;
+
+
+            return View(vehicle);
+
+        }
+
+        //POST
+        [HttpPost]
+        public async Task<ActionResult> VehicleDetails(Vehicle vehicle)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            return View(vehicle);
         }
 
         public async Task<ActionResult> CreateTrip(int vehicleID, double lng, double lat)
@@ -151,30 +224,6 @@ namespace CarRentalService.Controllers
             current.AfterTripInteriorFront = "";
             current.AfterTripInteriorBack = "";
         }
-
-        // GET: Vehicles/Details/5
-        public async Task<ActionResult> VehicleDetails(int id, double lat, double lng)
-        {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
-            var vehicle = await _context.Vehicles.Where(v => v.Id == id).SingleOrDefaultAsync();
-
-            //string custLocation = customer.CurrentLat.ToString() + ',' + customer.CurrentLong.ToString();
-            //string url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + custLocation + "&destination=" + vehicle.Location + "&key=" + Secrets.GOOGLE_API_KEY;
-            //HttpClient client = new HttpClient();
-            //HttpResponseMessage response = await client.GetAsync(url);
-            //string jsonResult = await response.Content.ReadAsStringAsync();
-            //JObject jobject = JObject.Parse(jsonResult);
-            //int distanceLength = jobject.SelectToken("routes[0].legs[0].distance.text").ToString().Length;
-
-
-
-            //var directions = 
-            //ViewBag.MapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=" + Secrets.GOOGLE_API_KEY;
-            return View(vehicle);
-
-        }
-
 
         // GET: Customers/Details/5
         public async Task<IActionResult> TripPage()
