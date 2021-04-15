@@ -52,9 +52,6 @@ function handleDuringTrip(values) {
     rows.push("<div>Enjoy your trip!</div>");
     rows.push("<div class='btn btn-primary' onclick='twilioRequest()'>Get Your Access Code</div>");
     rows.push(`<div>Destination: ${values.destination}</div>`);
-    rows.push(`<div>Estimated Time to arrival: ${values.estimatedTime} minutes</div>`);
-    rows.push("<div>Estimated Cost: $" + `${values.estimatedTime} dollars </div>`);
-    rows.push(`<div>Map coordinates: Lng: ${values.lng}, lat: ${values.lat} </div>`);
     rows.push("<div class='btn btn-primary' onclick='confirmLocation()'>End Trip</div>");
     $("#MainArea").html(rows.join(""));
 }

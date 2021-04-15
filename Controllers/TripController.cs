@@ -126,14 +126,15 @@ namespace CarRentalService.Controllers
             try
             {
                 var trip = await _context.Trips.Where(t => t.Id == id).SingleOrDefaultAsync();
+                var customer = await _context.Customers.Where(c => c.Id == trip.CustomerId).SingleOrDefaultAsync();
                 if (trip == null)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    DuringTripModel model = new DuringTripModel {Destination = "Street Address", Lat = trip.EndLat, Lng = trip.EndLng,
-                        EstimatedCost = trip.Cost, EstimatedTime = 30};
+                    string address = customer.DestinationStreet + " " + customer.DestinationCity + ", " + customer.DestinationState + " " + customer.DestinationZip;
+                    DuringTripModel model = new DuringTripModel {Destination = address};
                     return Ok(model);
                 }
             } catch {
