@@ -202,7 +202,8 @@ namespace CarRentalService.Controllers
             @ViewBag.Distance = distance.ToString() + "miles";
             @ViewBag.MapUrl = $"https://www.google.com/maps/embed/v1/directions?key=" + Secrets.GOOGLE_API_KEY + "&origin=" + vehicle.Location + "&destination=" + destinationLocation;
             @ViewBag.Duration = jobject.SelectToken("routes[0].legs[0].duration.text").ToString();
-            @ViewBag.Cost = 49.99 + (distance - 100) * .25;
+            var cost = 49.99 + (distance - 100) * .25;
+            @ViewBag.Cost = Math.Round(cost, 2);
             ViewBag.Lat = lat;
             ViewBag.Lng = lng;
 
