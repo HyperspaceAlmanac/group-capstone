@@ -30,10 +30,16 @@ namespace CarRentalService.Controllers
     {
         private readonly ApplicationDbContext _context;
         private HttpClient _Response;
+        private readonly string _userImagesDirectory = "wwwroot\\Images";
+        private List<string> _photoTypes;
 
         public CustomerController(ApplicationDbContext context)
         {
             _context = context;
+            System.IO.Directory.CreateDirectory(_userImagesDirectory);
+            System.IO.Directory.CreateDirectory(_userImagesDirectory + "\\Before");
+            System.IO.Directory.CreateDirectory(_userImagesDirectory + "\\After");
+            _photoTypes = new List<string>() { "front", "back", "left", "right", "interiorFront", "interiorBack" };
         }
 
         // GET: Customers
@@ -228,11 +234,9 @@ namespace CarRentalService.Controllers
 
             Trip newTrip = PopulateTrip(customer, vehicle);
             // Assuming that vehicle always has one trip where it is placed.
-            var prevTrip = await _context.Trips.Where(t => t.VehicleId == vehicle.Id).OrderBy(t => t.EndTime).LastOrDefaultAsync();
-            if (prevTrip != null)
-            {
-                GetPreviousImageURLs(newTrip, prevTrip);
-            }
+
+            GetPreviousImageURLs(newTrip, vehicle.Id);
+
             // Estimated cost
             newTrip.Cost = cost;
             newTrip.EndLat = lat;
@@ -241,6 +245,7 @@ namespace CarRentalService.Controllers
             // User gets Twillo code
             return View(newTrip);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -259,14 +264,55 @@ namespace CarRentalService.Controllers
             return trip;
         }
 
-        private void GetPreviousImageURLs(Trip current, Trip prev)
+        private void GetPreviousImageURLs(Trip current, int id)
         {
-            current.BeforeTripFrontImage = prev.AfterTripFrontImage ?? "";
-            current.BeforeTripBackImage = prev.AfterTripBackImage ?? "";
-            current.BeforeTripLeftImage = prev.AfterTripLeftImage ?? "";
-            current.BeforeTripRightImage = prev.AfterTripRightImage ?? "";
-            current.BeforeTripInteriorFront = prev.AfterTripInteriorFront ?? "";
-            current.BeforeTripInteriorBack = prev.AfterTripInteriorBack ?? "";
+            if (System.IO.File.Exists($"{_userImagesDirectory}\\Before\\front.{id}.png"))
+            {
+                current.BeforeTripFrontImage = "front." + id + ".png";
+            } else {
+                current.BeforeTripFrontImage = "FrontDefault.png";
+            }
+            if (System.IO.File.Exists($"{_userImagesDirectory}\\Before\\back.{id}.png"))
+            {
+                current.BeforeTripBackImage = "back." + id + ".png";
+            }
+            else
+            {
+                current.BeforeTripBackImage = "BackDefault.png";
+            }
+            if (System.IO.File.Exists($"{_userImagesDirectory}\\Before\\left.{id}.png"))
+            {
+                current.BeforeTripLeftImage = "left." + id + ".png";
+            }
+            else
+            {
+                current.BeforeTripLeftImage = "LeftDefault.png";
+            }
+            if (System.IO.File.Exists($"{_userImagesDirectory}\\Before\\right.{id}.png"))
+            {
+                current.BeforeTripRightImage = "right." + id + ".png";
+            }
+            else
+            {
+                current.BeforeTripRightImage = "RightDefault.png";
+            }
+            if (System.IO.File.Exists($"{_userImagesDirectory}\\Before\\interiorFront.{id}.png"))
+            {
+                current.BeforeTripInteriorFront = "interiorFront." + id + ".png";
+            }
+            else
+            {
+                current.BeforeTripInteriorFront = "InteriorFrontDefault.png";
+            }
+            if (System.IO.File.Exists($"{_userImagesDirectory}\\Before\\interiorBack.{id}.png"))
+            {
+                current.BeforeTripInteriorBack = "interiorBack." + id + ".png";
+            }
+            else
+            {
+                current.BeforeTripInteriorBack = "InteriorBackDefault.png";
+            }
+            
             current.AfterTripFrontImage = "";
             current.AfterTripBackImage = "";
             current.AfterTripLeftImage = "";
@@ -291,12 +337,6 @@ namespace CarRentalService.Controllers
             
         }
 
-        public bool PhotosUploaded(Vehicle vehicle)
-        {
-            return false;
-        }
-
-        // GET
 
 
         // GET: Customers/Details/5

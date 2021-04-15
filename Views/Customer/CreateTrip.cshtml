@@ -12,7 +12,26 @@
 
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-6">
+        <label class="col-10">Front</label>
+        <img src=@("../Images/Before/" + Model.BeforeTripFrontImage) alt="Car Front" class="img-fluid col-10" />
+        <br />
+        <label class="col-10">Back</label>
+        <img src=@("../Images/Before/" + Model.BeforeTripBackImage) alt="Car Back" class="img-fluid col-10" />
+        <br />
+        <label class="col-10">Left</label>
+        <img src=@("../Images/Before/" + Model.BeforeTripLeftImage) alt="Car Left" class="img-fluid col-10" />
+        <br />
+        <label class="col-10">Right</label>
+        <img src=@("../Images/Before/" + Model.BeforeTripRightImage) alt="Car Right" class="img-fluid col-10" />
+        <br />
+        <label class="col-10">Front Interior</label>
+        <img src=@("../Images/Before/" + Model.BeforeTripInteriorFront) alt="Car InteriorFront" class="img-fluid col-10" />
+        <br />
+        <label class="col-10">Back Interior</label>
+        <img src=@("../Images/Before/" + Model.BeforeTripInteriorBack) alt="Car InteriorBack" class="img-fluid col-10" />
+    </div>
+    <div class="col-6">
         <form asp-action="CreateTrip">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="StartLng" />
@@ -26,6 +45,12 @@
             <input type="hidden" asp-for="BeforeTripRightImage" />
             <input type="hidden" asp-for="BeforeTripInteriorFront" />
             <input type="hidden" asp-for="BeforeTripInteriorBack" />
+            <input type="hidden" asp-for="AfterTripFrontImage" />
+            <input type="hidden" asp-for="AfterTripBackImage" />
+            <input type="hidden" asp-for="AfterTripLeftImage" />
+            <input type="hidden" asp-for="AfterTripRightImage" />
+            <input type="hidden" asp-for="AfterTripInteriorFront" />
+            <input type="hidden" asp-for="AfterTripInteriorBack" />
             <input type="hidden" asp-for="CustomerId" />
             <input type="hidden" asp-for="VehicleId" />
 
@@ -39,9 +64,8 @@
             </div>
         </form>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
 </div>
-
