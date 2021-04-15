@@ -165,6 +165,8 @@ namespace CarRentalService.Controllers
             try
             {
                 var trip = await _context.Trips.Where(t => t.Id == id).SingleOrDefaultAsync();
+                var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).SingleOrDefaultAsync();
+                var customer = await _context.Customers.Where(c => c.Id == trip.CustomerId).SingleOrDefaultAsync();
                 if (trip == null)
                 {
                     return NotFound();
@@ -176,6 +178,11 @@ namespace CarRentalService.Controllers
                     trip.EndLng = endDestination[1];
                     trip.TripStatus = "CheckStatus";
                     _context.Update(trip);
+                    vehicle.LastKnownLatitude = endDestination[0];
+                    vehicle.LastKnownLongitude = endDestination[1];
+                    customer.CurrentLat = endDestination[0];
+                    customer.CurrentLong = endDestination[1];
+                    _context.Update(vehicle);
                     await _context.SaveChangesAsync();
                     return Ok();
                 }
