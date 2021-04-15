@@ -2,6 +2,9 @@
 using CarRentalService.Models;
 using CarRentalService.TwilioSend;
 using CarRentalService.ViewModels;
+using GoogleMapsApi;
+using GoogleMapsApi.Entities.Geocoding.Request;
+using GoogleMapsApi.Entities.Geocoding.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -57,15 +60,21 @@ namespace CarRentalService.Controllers
         {
             return NotFound();
         }
+        // Lat, Lng
 
-        private double[] GetGeoCode(ConfirmLocation location)
+        private async Task<double[]> GetGeoCode(ConfirmLocation location)
         {
             // hard code for now, API calls will eventually be service
-            return new double[] { 34.0430058, -118.2673597 };
-        }
-        private ConfirmLocation ConvertGeoCode(double lng, double lat)
-        {
-            return new ConfirmLocation { Street = "1234 Street", Lat = lat, Lng = lng, City = "San Diego", State = "CA", Zipcode = 12345 };
+            var geoCodingEngine = GoogleMaps.Geocode;
+            GeocodingRequest geocodeRequest = new()
+            {
+                Address = $"{location.Street}, {location.City}, {location.State} {location.Zipcode}",
+                ApiKey = Secrets.GOOGLE_API_KEY,
+            };
+            GeocodingResponse geocode = await geoCodingEngine.QueryAsync(geocodeRequest);
+            double lat = geocode.Results.First().Geometry.Location.Latitude;
+            double lng = geocode.Results.First().Geometry.Location.Longitude;
+            return new double[] { lat, lng };
         }
 
         private void FillPhotos(Trip trip, TakePhotos photos)
@@ -138,6 +147,7 @@ namespace CarRentalService.Controllers
             try
             {
                 var trip = await _context.Trips.Where(t => t.Id == id).SingleOrDefaultAsync();
+                var customer = await _context.Customers.Where(c => c.Id == trip.CustomerId).SingleOrDefaultAsync();
                 if (trip == null)
                 {
                     return NotFound();
@@ -150,7 +160,13 @@ namespace CarRentalService.Controllers
                         _context.Update(trip);
                         await _context.SaveChangesAsync();
                     }
-                    ConfirmLocation location = ConvertGeoCode(trip.EndLng, trip.EndLat);
+                    ConfirmLocation location = new ConfirmLocation()
+                    {
+                        Street = customer.DestinationStreet,
+                        City = customer.DestinationCity,
+                        State = customer.DestinationState,
+                        Zipcode = customer.DestinationZip
+                    };
                     return Ok(location);
                 }
             }
@@ -173,16 +189,27 @@ namespace CarRentalService.Controllers
                 }
                 else
                 {
-                    double[] endDestination = GetGeoCode(location);
+                    //Lat, Lng
+                    double[] endDestination = await GetGeoCode(location);
                     trip.EndLat = endDestination[0];
                     trip.EndLng = endDestination[1];
                     trip.TripStatus = "CheckStatus";
                     _context.Update(trip);
-                    vehicle.LastKnownLatitude = endDestination[0];
-                    vehicle.LastKnownLongitude = endDestination[1];
+                   
+                    vehicle.CurrentStreet = location.Street;
+                    vehicle.CurrentCity = location.City;
+                    vehicle.CurrentState = location.State;
+                    vehicle.CurrentZip = location.Zipcode;
+                    _context.Update(vehicle);
+                    
+                    customer.CurrentStreet = location.Street;
+                    customer.CurrentCity = location.City;
+                    customer.CurrentState = location.State;
+                    customer.CurrentZip = location.Zipcode;
                     customer.CurrentLat = endDestination[0];
                     customer.CurrentLong = endDestination[1];
-                    _context.Update(vehicle);
+                    _context.Update(customer);
+
                     await _context.SaveChangesAsync();
                     return Ok();
                 }
@@ -261,7 +288,8 @@ namespace CarRentalService.Controllers
                 {
                     trip.FuelEnd = status.Fuel;
                     trip.OdometerEnd = status.Odometer;
-                    await ReportIssues(status, trip.VehicleId);
+                    bool issues = await ReportIssues(status, trip.VehicleId);
+
                     _context.Update(trip);
                     trip.TripStatus = "TakePhotos";
                     await _context.SaveChangesAsync();
@@ -369,6 +397,10 @@ namespace CarRentalService.Controllers
                     trip.EndTime = DateTime.Now;
                     ShiftPhotos(trip);
                     _context.Update(trip);
+                    await _context.SaveChangesAsync();
+
+                    var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).SingleOrDefaultAsync();
+                    vehicle.IsAvailable = true;
                     await _context.SaveChangesAsync();
                     return Ok();
                 }

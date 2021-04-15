@@ -2,7 +2,9 @@
 
 (function ($) {
     //alert("Hello");
-    handleStatus();
+    if ($("#TripStatus")) {
+        handleStatus();
+    }
 })(jQuery);
 
 // Calls this first to get status
@@ -69,7 +71,7 @@ function handleConfirmLocation(values) {
     rows.push("<label>State</label>");
     rows.push(`<input type='text' name='state' value='${values.state}' required>`);
     rows.push("<label>Zipcode</label>");
-    rows.push(`<input type='number' name='zipcode' value='${values.zipcode}' required>`);
+    rows.push(`<input type='string' name='zipcode' value='${values.zipcode}' required>`);
     rows.push("<button type='submit' class='btn btn-info'>Confirm</button>");
     rows.push("</form>");
     $("#MainArea").html(rows.join(""));

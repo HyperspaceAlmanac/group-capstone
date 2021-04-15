@@ -88,7 +88,23 @@ namespace CarRentalService.Controllers
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
 
-            var vehicles = await _context.Vehicles.Where(v => v.IsAvailable == true).ToListAsync();
+            var availableVehicles = await _context.Vehicles.Where(v => v.IsAvailable == true && v.IsOperational).ToListAsync();
+            List<Vehicle> vehicles = new List<Vehicle>();
+            Issue issue;
+            foreach (Vehicle v in availableVehicles)
+            {
+
+                issue = await _context.Issues.Where(i => i.VehicleId == v.Id && i.Resolved == false).FirstOrDefaultAsync();
+                if (issue == null)
+                {
+                    vehicles.Add(v);
+                }
+                else
+                {
+                    v.IsOperational = false;
+                    _context.Update(v);
+                }
+            }
             string custLocation = customer.CurrentLat.ToString() + ',' + customer.CurrentLong.ToString();
 
             //Save customer location a GeoCode request. 
@@ -132,39 +148,39 @@ namespace CarRentalService.Controllers
                 switch (sortOrder)
                 {
                     case "make_descending":
-                        vehicles = await _context.Vehicles.OrderByDescending(v => v.Make).ToListAsync();
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && v.IsOperational).OrderByDescending(v => v.Make).ToListAsync();
                         ViewBag.MakeSortParam = "make_descending";
                         break;
                     case "make_ascending":
-                        vehicles = await _context.Vehicles.OrderBy(v => v.Make).ToListAsync();
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && v.IsOperational).OrderBy(v => v.Make).ToListAsync();
                         ViewBag.MakeSortParam = "make_ascending";
                         break;
                     case "model_descending":
-                        vehicles = await _context.Vehicles.OrderByDescending(v => v.Model).ToListAsync();
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && v.IsOperational).OrderByDescending(v => v.Model).ToListAsync();
                         ViewBag.ModelSortParam = "model_descending";
                         break;
                     case "model_ascending":
-                        vehicles = await _context.Vehicles.OrderBy(v => v.Model).ToListAsync();
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && v.IsOperational).OrderBy(v => v.Model).ToListAsync();
                         ViewBag.ModelSortParam = "model_ascending";
                         break;
                     case "year_descending":
-                        vehicles = await _context.Vehicles.OrderByDescending(v => v.Year).ToListAsync();
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && v.IsOperational).OrderByDescending(v => v.Year).ToListAsync();
                         ViewBag.YearSortParam = "year_descending";
                         break;
                     case "year_ascending":
-                        vehicles = await _context.Vehicles.OrderBy(v => v.Year).ToListAsync();
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && v.IsOperational).OrderBy(v => v.Year).ToListAsync();
                         ViewBag.YearSortParam = "year_ascending";
                         break;
                     case "distance_descending":
-                        vehicles = await _context.Vehicles.OrderByDescending(v => v.Distance).ToListAsync();
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && v.IsOperational).OrderByDescending(v => v.Distance).ToListAsync();
                         ViewBag.DistanceSortParam = "distance_descending";
                         break;
                     case "distance_ascending":
-                        vehicles = await _context.Vehicles.OrderBy(v => v.Distance).ToListAsync();
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && v.IsOperational).OrderBy(v => v.Distance).ToListAsync();
                         ViewBag.DistanceSortParam = "distance_ascending";
                         break;
                     default:
-                        vehicles = await _context.Vehicles.OrderByDescending(v => v.Distance).ToListAsync();
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && v.IsOperational).OrderByDescending(v => v.Distance).ToListAsync();
                         break;
                 }
             }
@@ -246,6 +262,12 @@ namespace CarRentalService.Controllers
         {
             trip.StartTime = DateTime.Now;
             trip.TripStatus = "DuringTrip";
+
+            var vehicle = await _context.Vehicles.Where(v => v.Id == trip.Id).SingleOrDefaultAsync();
+            vehicle.IsAvailable = false;
+            _context.Vehicles.Update(vehicle);
+            await _context.SaveChangesAsync();
+
             _context.Trips.Add(trip);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
