@@ -137,10 +137,10 @@ function handleTakePhotos(values) {
     temp = values.beforeTripRightImage !== "" ? values.beforeTripRightImage : "RightDefault.png";
     rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Before Trip Photo of Front Interior</div>");
-    temp = values.beforeTripInteriorFront !== "" ? values.beforeTripInteriorFrontImage : "InteriorFrontDefault.png";
+    temp = values.beforeTripInteriorFront !== "" ? values.beforeTripInteriorFront : "InteriorFrontDefault.png";
     rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("<div>Before Trip Photo of Back Interior</div>");
-    temp = values.beforeTripInteriorBack !== "" ? values.beforeTripInteriorBackImage : "InteriorBackDefault.png";
+    temp = values.beforeTripInteriorBack !== "" ? values.beforeTripInteriorBack : "InteriorBackDefault.png";
     rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-responsive'>`);
     rows.push("</div>");
     rows.push(`<div class='col-6'>`);
