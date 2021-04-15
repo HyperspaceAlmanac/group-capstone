@@ -9,17 +9,11 @@ using CarRentalService.Data;
 using CarRentalService.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-
-using System.Configuration;
 using GoogleMapsApi;
 using GoogleMapsApi.Entities.Geocoding.Response;
 using GoogleMapsApi.Entities.Geocoding.Request;
 using Stripe;
-using CarRentalService.TwilioSend;
 using System.Net.Http;
-using System.Net;
-using System.IO;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using CarRentalService.ViewModels;
 
@@ -29,7 +23,6 @@ namespace CarRentalService.Controllers
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private HttpClient _Response;
         private readonly string _userImagesDirectory = "wwwroot\\Images";
         private List<string> _photoTypes;
 
@@ -93,17 +86,17 @@ namespace CarRentalService.Controllers
         public async Task<ActionResult> SelectVehicle(string sortOrder, string searchString)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
 
-            var vehicles = _context.Vehicles.Where(v => v.IsAvailable == true).ToList();
+            var vehicles = await _context.Vehicles.Where(v => v.IsAvailable == true).ToListAsync();
             string custLocation = customer.CurrentLat.ToString() + ',' + customer.CurrentLong.ToString();
 
             //Save customer location a GeoCode request. 
 
-            for (var i = 0; i < vehicles.Count(); i++)
+            for (var i = 0; i < vehicles.Count; i++)
             {
                 var geoCodingEngine = GoogleMaps.Geocode;
-                GeocodingRequest geocodeRequest = new GeocodingRequest()
+                GeocodingRequest geocodeRequest = new ()
                 {
                     Address = $"{vehicles[i].CurrentStreet}, {vehicles[i].CurrentCity}, {vehicles[i].CurrentState} {vehicles[i].CurrentZip}",
                     ApiKey = Secrets.GOOGLE_API_KEY,
@@ -115,7 +108,7 @@ namespace CarRentalService.Controllers
                 vehicles[i].Location = vehicles[i].LastKnownLatitude.ToString() + ',' + vehicles[i].LastKnownLongitude.ToString();
 
                 string url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + custLocation + "&destination=" + vehicles[i].Location + "&key=" + Secrets.GOOGLE_API_KEY;
-                HttpClient client = new HttpClient();
+                HttpClient client = new();
                 HttpResponseMessage response = await client.GetAsync(url);
                 string jsonResult = await response.Content.ReadAsStringAsync();
                 JObject jobject = JObject.Parse(jsonResult);
@@ -128,50 +121,50 @@ namespace CarRentalService.Controllers
 
             if (!String.IsNullOrEmpty(searchString)){
                 string sSU = searchString.ToUpper();
-                vehicles = _context.Vehicles.Where(v => 
+                vehicles = await _context.Vehicles.Where(v => 
                                                 v.Make.ToUpper().Contains(sSU) || 
                                                 v.Model.ToUpper().Contains(sSU) ||
                                                 v.Year.ToString().Contains(sSU)
-                                            ).ToList();
+                                            ).ToListAsync();
             }
             else
             {
                 switch (sortOrder)
                 {
                     case "make_descending":
-                        vehicles = _context.Vehicles.OrderByDescending(v => v.Make).ToList();
+                        vehicles = await _context.Vehicles.OrderByDescending(v => v.Make).ToListAsync();
                         ViewBag.MakeSortParam = "make_descending";
                         break;
                     case "make_ascending":
-                        vehicles = _context.Vehicles.OrderBy(v => v.Make).ToList();
+                        vehicles = await _context.Vehicles.OrderBy(v => v.Make).ToListAsync();
                         ViewBag.MakeSortParam = "make_ascending";
                         break;
                     case "model_descending":
-                        vehicles = _context.Vehicles.OrderByDescending(v => v.Model).ToList();
+                        vehicles = await _context.Vehicles.OrderByDescending(v => v.Model).ToListAsync();
                         ViewBag.ModelSortParam = "model_descending";
                         break;
                     case "model_ascending":
-                        vehicles = _context.Vehicles.OrderBy(v => v.Model).ToList();
+                        vehicles = await _context.Vehicles.OrderBy(v => v.Model).ToListAsync();
                         ViewBag.ModelSortParam = "model_ascending";
                         break;
                     case "year_descending":
-                        vehicles = _context.Vehicles.OrderByDescending(v => v.Year).ToList();
+                        vehicles = await _context.Vehicles.OrderByDescending(v => v.Year).ToListAsync();
                         ViewBag.YearSortParam = "year_descending";
                         break;
                     case "year_ascending":
-                        vehicles = _context.Vehicles.OrderBy(v => v.Year).ToList();
+                        vehicles = await _context.Vehicles.OrderBy(v => v.Year).ToListAsync();
                         ViewBag.YearSortParam = "year_ascending";
                         break;
                     case "distance_descending":
-                        vehicles = _context.Vehicles.OrderByDescending(v => v.Distance).ToList();
+                        vehicles = await _context.Vehicles.OrderByDescending(v => v.Distance).ToListAsync();
                         ViewBag.DistanceSortParam = "distance_descending";
                         break;
                     case "distance_ascending":
-                        vehicles = _context.Vehicles.OrderBy(v => v.Distance).ToList();
+                        vehicles = await _context.Vehicles.OrderBy(v => v.Distance).ToListAsync();
                         ViewBag.DistanceSortParam = "distance_ascending";
                         break;
                     default:
-                        vehicles = _context.Vehicles.OrderByDescending(v => v.Distance).ToList();
+                        vehicles = await _context.Vehicles.OrderByDescending(v => v.Distance).ToListAsync();
                         break;
                 }
             }
@@ -186,7 +179,7 @@ namespace CarRentalService.Controllers
             var vehicle = await _context.Vehicles.Where(v => v.Id == id).SingleOrDefaultAsync();
 
             var geoCodingEngine = GoogleMaps.Geocode;
-            GeocodingRequest geocodeRequest = new GeocodingRequest()
+            GeocodingRequest geocodeRequest = new ()
             {
                 Address = $"{customer.DestinationStreet}, {customer.DestinationCity}, {customer.DestinationState} {customer.DestinationZip}",
                 ApiKey = Secrets.GOOGLE_API_KEY,
@@ -198,7 +191,7 @@ namespace CarRentalService.Controllers
 
 
             string url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + vehicle.Location + "&destination=" + destinationLocation + "&key=" + Secrets.GOOGLE_API_KEY;
-            HttpClient client = new HttpClient();
+            HttpClient client = new ();
             HttpResponseMessage response = await client.GetAsync(url);
             string jsonResult = await response.Content.ReadAsStringAsync();
             JObject jobject = JObject.Parse(jsonResult);
@@ -259,7 +252,7 @@ namespace CarRentalService.Controllers
         }
         private Trip PopulateTrip(Models.Customer customer, Vehicle vehicle)
         {
-            Trip trip = new Trip {CustomerId = customer.Id, Customer = customer, VehicleId = vehicle.Id, Vehicle = vehicle, StartLng = vehicle.LastKnownLongitude.Value,
+            Trip trip = new() {CustomerId = customer.Id, Customer = customer, VehicleId = vehicle.Id, Vehicle = vehicle, StartLng = vehicle.LastKnownLongitude.Value,
                 StartLat = vehicle.LastKnownLatitude.Value, OdometerStart = vehicle.Odometer, FuelStart = vehicle.Fuel};
             return trip;
         }
@@ -371,7 +364,7 @@ namespace CarRentalService.Controllers
             {
                 try
                 {
-                    GeocodingRequest geocodeRequest = new GeocodingRequest()
+                    GeocodingRequest geocodeRequest = new ()
                     {
                         Address = $"{customer.CurrentStreet}, {customer.CurrentCity}, {customer.CurrentState} {customer.CurrentZip}",
                         ApiKey = Secrets.GOOGLE_API_KEY,
@@ -469,37 +462,39 @@ namespace CarRentalService.Controllers
             return _context.Customers.Any(e => e.Id == id);
         }
 
-        public ActionResult TotalBill()
+        public async Task<IActionResult> TotalBill()
         {
             ViewBag.StripePublishKey = Secrets.STRIPES_PUBLIC_KEY;
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
 
-            List<Trip> customerTrips = _context.Trips.Where(t => t.CustomerId.Equals(customer.Id)).ToList();
+            List<Trip> customerTrips = await _context.Trips.Where(t => t.CustomerId.Equals(customer.Id)).ToListAsync();
             return View(customerTrips);
         }
 
         [HttpPost]
-        public ActionResult Charge(string stripeToken, string stripeEmail, int amount, string description, int tripId)
+        public async Task<IActionResult> Charge(string stripeToken, string stripeEmail, int amount, string description, int tripId)
         {
             StripeConfiguration.ApiKey = Secrets.STRIPES_API_KEY;
-            var myCharge = new ChargeCreateOptions();
-            myCharge.Amount = amount;
-            myCharge.Currency = "USD";
-            myCharge.ReceiptEmail = stripeEmail;
-            myCharge.Description = description;
-            myCharge.Source = stripeToken;
-            myCharge.Capture = true;
+            var myCharge = new ChargeCreateOptions
+            {
+                Amount = amount,
+                Currency = "USD",
+                ReceiptEmail = stripeEmail,
+                Description = description,
+                Source = stripeToken,
+                Capture = true
+            };
             var chargeService = new ChargeService();
             try
             {
                 Charge stripeCharge = chargeService.Create(myCharge);
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var customer = _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+                var customer = await _context.Customers.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
 
                 if (tripId.Equals(-1))
                 {
-                    List<Trip> allTrips = _context.Trips.Where(t => t.CustomerId.Equals(customer.Id)).ToList();
+                    List<Trip> allTrips = await _context.Trips.Where(t => t.CustomerId.Equals(customer.Id)).ToListAsync();
                     foreach (var trip in allTrips)
                     {
                         trip.IsPaid = true;
@@ -508,11 +503,11 @@ namespace CarRentalService.Controllers
                 }
                 else
                 {
-                    Trip tripPaid = _context.Trips.Where(t => t.Id.Equals(tripId)).FirstOrDefault();
+                    Trip tripPaid = await _context.Trips.Where(t => t.Id.Equals(tripId)).FirstOrDefaultAsync();
                     tripPaid.IsPaid = true;
                     _context.Update(tripPaid);
                 }
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 double amountPaid = Convert.ToDouble(myCharge.Amount);
                 ViewBag.PaymentInfo = myCharge;
                 ViewBag.PaymentTotal = Math.Round(amountPaid/100, 2);

@@ -53,13 +53,13 @@ namespace CarRentalService.Controllers
         public async Task<ActionResult> SelectVehicle()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var employee = _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefault();
-            var vehicles = _context.Vehicles.Where(v => v.IsAvailable == true && v.IsOperational == false).ToList();
+            var employee = await _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
+            var vehicles = await _context.Vehicles.Where(v => v.IsAvailable == true && v.IsOperational == false).ToListAsync();
             string employeeLocation = employee.CurrentLat.ToString() + ',' + employee.CurrentLong.ToString();
 
             //Save employee location a GeoCode request.
 
-            for (var i = 0; i < vehicles.Count(); i++)
+            for (var i = 0; i < vehicles.Count; i++)
             {
                 var geoCodingEngine = GoogleMaps.Geocode;
                 GeocodingRequest geocodeRequest = new GeocodingRequest()
@@ -125,7 +125,7 @@ namespace CarRentalService.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> StartService(ServiceReceipt serviceReceipt)
         {
-            Vehicle vehicle = _context.Vehicles.Where(v => v.Id == serviceReceipt.VehicleId).FirstOrDefault();
+            Vehicle vehicle = await _context.Vehicles.Where(v => v.Id == serviceReceipt.VehicleId).FirstOrDefaultAsync();
 
             TwilioText.SendTextToDriver(Secrets.MY_PHONE_NUMBER, vehicle.DoorKey);
 
