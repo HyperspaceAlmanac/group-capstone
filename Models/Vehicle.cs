@@ -29,5 +29,8 @@ namespace CarRentalService.Models
         public string? Location { get; set; }
         public double? Distance { get; set; }
         public double? Duration { get; set; }
+
+        [NotMapped]
+        public string IssuesDescription { get; set; }
     }
 }

@@ -50,13 +50,33 @@ namespace CarRentalService.Controllers
             }
             
         }
-        public async Task<ActionResult> SelectVehicle()
+        public async Task<ActionResult> SelectVehicle(string sortOrder, string searchString)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var employee = await _context.Employees.Where(c => c.IdentityUserId == userId).SingleOrDefaultAsync();
-            var vehicles = await _context.Vehicles.Where(v => v.IsAvailable == true && v.IsOperational == false).ToListAsync();
+            var vehicles = await _context.Vehicles.Where(v => v.IsAvailable == true).ToListAsync();
             string employeeLocation = employee.CurrentLat.ToString() + ',' + employee.CurrentLong.ToString();
+            var issues = await _context.Issues.Where(i => !i.Resolved).ToListAsync();
+           
+            foreach (var vehicle in vehicles)
+            {
+                foreach (var issue in issues)
+                {
+                    if (issue.VehicleId.Equals(vehicle.Id))
+                    {
+                        vehicle.IsOperational = false;
+                        _context.Vehicles.Update(vehicle);
+                    }
+                    else
+                    {
+                        vehicle.IsOperational = true;
+                        _context.Vehicles.Update(vehicle);
+                    }
+                }
+            }
+            await _context.SaveChangesAsync();
 
+            vehicles = vehicles.Where(v => !v.IsOperational).ToList();
             //Save employee location a GeoCode request.
 
             for (var i = 0; i < vehicles.Count; i++)
@@ -87,8 +107,59 @@ namespace CarRentalService.Controllers
                 vehicles[i].Duration = duration;
             }
             await _context.SaveChangesAsync();
-            List<Vehicle> vehiclesSorted = vehicles.OrderBy(v => v.Distance).ToList();
-            return View(vehiclesSorted);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                string sSU = searchString.ToUpper();
+                vehicles = await _context.Vehicles.Where(v => !v.IsOperational && v.IsAvailable && (
+                                                v.Make.ToUpper().Contains(sSU) ||
+                                                v.Model.ToUpper().Contains(sSU) ||
+                                                v.Year.ToString().Contains(sSU))
+                                            ).ToListAsync();
+            }
+            else
+            {
+                switch (sortOrder)
+                {
+                    case "make_descending":
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && !v.IsOperational).OrderByDescending(v => v.Make).ToListAsync();
+                        ViewBag.MakeSortParam = "make_descending";
+                        break;
+                    case "make_ascending":
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && !v.IsOperational).OrderBy(v => v.Make).ToListAsync();
+                        ViewBag.MakeSortParam = "make_ascending";
+                        break;
+                    case "model_descending":
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && !v.IsOperational).OrderByDescending(v => v.Model).ToListAsync();
+                        ViewBag.ModelSortParam = "model_descending";
+                        break;
+                    case "model_ascending":
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && !v.IsOperational).OrderBy(v => v.Model).ToListAsync();
+                        ViewBag.ModelSortParam = "model_ascending";
+                        break;
+                    case "year_descending":
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && !v.IsOperational).OrderByDescending(v => v.Year).ToListAsync();
+                        ViewBag.YearSortParam = "year_descending";
+                        break;
+                    case "year_ascending":
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && !v.IsOperational).OrderBy(v => v.Year).ToListAsync();
+                        ViewBag.YearSortParam = "year_ascending";
+                        break;
+                    case "distance_descending":
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && !v.IsOperational).OrderByDescending(v => v.Distance).ToListAsync();
+                        ViewBag.DistanceSortParam = "distance_descending";
+                        break;
+                    case "distance_ascending":
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && !v.IsOperational).OrderBy(v => v.Distance).ToListAsync();
+                        ViewBag.DistanceSortParam = "distance_ascending";
+                        break;
+                    default:
+                        vehicles = await _context.Vehicles.Where(v => v.IsAvailable && !v.IsOperational).OrderByDescending(v => v.Distance).ToListAsync();
+                        break;
+                }
+            }
+            ViewBag.Issues = await _context.Issues.Where(i => !i.Resolved).ToListAsync();
+            return View(vehicles);
         }
 
         public async Task<IActionResult> StartService(int? id)

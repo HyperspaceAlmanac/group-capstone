@@ -81,6 +81,7 @@ namespace CarRentalService.Data
                         CurrentCity = "Chula Vista",
                         CurrentState = "CA",
                         CurrentZip = "91910",
+                        DoorKey = "Ford123",
                         IsAvailable = true,
                         IsOperational = true
                     },
@@ -97,6 +98,7 @@ namespace CarRentalService.Data
                         CurrentCity = "San Diego",
                         CurrentState = "CA",
                         CurrentZip = "92139",
+                        DoorKey = "Oldie123",
                         IsAvailable = true,
                         IsOperational = true
                     },
@@ -113,6 +115,7 @@ namespace CarRentalService.Data
                         CurrentCity = "Chula Vista",
                         CurrentState = "CA",
                         CurrentZip = "91911",
+                        DoorKey = "Toyota123",
                         IsAvailable = true,
                         IsOperational = true
                     },
@@ -129,6 +132,7 @@ namespace CarRentalService.Data
                             CurrentCity = "San Diego",
                             CurrentState = "CA",
                             CurrentZip = "92108",
+                            DoorKey = "NotExist123",
                             IsAvailable = true,
                             IsOperational = true
                         },
@@ -145,6 +149,7 @@ namespace CarRentalService.Data
                             CurrentCity = "Chula Vista",
                             CurrentState = "CA",
                             CurrentZip = "91910",
+                            DoorKey = "Nissan123",
                             IsAvailable = true,
                             IsOperational = true
                         }

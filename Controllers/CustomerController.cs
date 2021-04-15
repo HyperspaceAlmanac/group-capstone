@@ -263,7 +263,7 @@ namespace CarRentalService.Controllers
             trip.StartTime = DateTime.Now;
             trip.TripStatus = "DuringTrip";
 
-            var vehicle = await _context.Vehicles.Where(v => v.Id == trip.Id).SingleOrDefaultAsync();
+            var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).SingleOrDefaultAsync();
             vehicle.IsAvailable = false;
             _context.Vehicles.Update(vehicle);
             await _context.SaveChangesAsync();
