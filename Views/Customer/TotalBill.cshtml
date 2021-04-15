@@ -20,7 +20,7 @@
     <article>
         <label>Pay $@totalBill Bill</label>
     </article>
-    <input type="hidden" name="amount" value="@(totalBill*100)" />>
+    <input type="hidden" name="amount" value="@(Math.Round(totalBill,2)*100)" />>
     <input type="hidden" name="description" value="Pay all trips" />>
     <input type="hidden" name="tripId" value="-1" />>
     <script src="//checkout.stripe.com/v2/checkout.js"
@@ -28,7 +28,7 @@
             data-key="@ViewBag.StripePublishKey"
             data-locale="auto"
             data-description="Pay all trips"
-            data-amount="@(totalBill*100)">
+            data-amount="@(Math.Round(totalBill,2)*100)">
     </script>
 </form>
 
@@ -124,7 +124,7 @@
                         <article>
                             <label>Pay $@Math.Round(item.Cost,2) Bill</label>
                         </article>
-                        <input type="hidden" name="amount" value="@(item.Cost*100)" />>
+                        <input type="hidden" name="amount" value="@(Math.Round(item.Cost,2)*100)" />>
                         <input type="hidden" name="description" value="Trip End Date @item.EndTime" />>
                         <input type="hidden" name="tripId" value="@item.Id" />>
                         <script src="//checkout.stripe.com/v2/checkout.js"
@@ -132,7 +132,7 @@
                                 data-key="@ViewBag.StripePublishKey"
                                 data-locale="auto"
                                 data-description="Trip @item.EndTime"
-                                data-amount="@(item.Cost*100)">
+                                data-amount="@(Math.Round(item.Cost,2)*100)">
                         </script>
                     </form>
                 }

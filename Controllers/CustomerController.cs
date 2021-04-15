@@ -472,8 +472,9 @@ namespace CarRentalService.Controllers
                     _context.Update(tripPaid);
                 }
                 _context.SaveChanges();
-
+                double amountPaid = Convert.ToDouble(myCharge.Amount);
                 ViewBag.PaymentInfo = myCharge;
+                ViewBag.PaymentTotal = Math.Round(amountPaid/100, 2);
                 return View(true);
             }
             catch (Exception exceptionThrown)

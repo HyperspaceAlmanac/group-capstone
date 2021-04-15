@@ -5,7 +5,7 @@
 
         <h1 style="color:green;">Payment Successful!</h1>
         <ul>
-            <li>Amount Paid: $@(ViewBag.PaymentInfo.Amount/100) </li>
+            <li>Amount Paid: $@ViewBag.PaymentTotal</li>
             <li>Receipt Email: @ViewBag.PaymentInfo.ReceiptEmail  </li>
             <li>Description: @ViewBag.PaymentInfo.Description </li>
         </ul>
