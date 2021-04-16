@@ -398,12 +398,13 @@ namespace CarRentalService.Controllers
                     trip.EndTime = DateTime.Now;
                     ShiftPhotos(trip);
                     _context.Update(trip);
-                    await _context.SaveChangesAsync();
 
                     var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).SingleOrDefaultAsync();
-                    vehicle.IsAvailable = true;
                     vehicle.Odometer = trip.OdometerEnd;
                     vehicle.Fuel = trip.FuelEnd;
+                    vehicle.IsAvailable = true;
+                    _context.Update(vehicle);
+
                     await _context.SaveChangesAsync();
                     return Ok();
                 }
