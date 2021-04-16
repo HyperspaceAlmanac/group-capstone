@@ -402,6 +402,8 @@ namespace CarRentalService.Controllers
 
                     var vehicle = await _context.Vehicles.Where(v => v.Id == trip.VehicleId).SingleOrDefaultAsync();
                     vehicle.IsAvailable = true;
+                    vehicle.Odometer = trip.OdometerEnd;
+                    vehicle.Fuel = trip.FuelEnd;
                     await _context.SaveChangesAsync();
                     return Ok();
                 }
