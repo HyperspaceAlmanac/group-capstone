@@ -2,7 +2,7 @@
 
 (function ($) {
     //alert("Hello");
-    if ($("#TripStatus")) {
+    if ($("#TripStatus").length) {
         handleStatus();
     }
 })(jQuery);
