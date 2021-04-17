@@ -14,22 +14,22 @@
 <div class="row">
     <div class="col-6">
         <label class="col-10">Front</label>
-        <img src=@("../Images/Before/" + Model.BeforeTripFrontImage +"?=" + DateTime.Now.ToString()) alt="Car Front" class="img-fluid col-10" />
+        <img src=@("../Images/Before/" + Model.BeforeTripFrontImage +"?=" + Uri.EscapeDataString(DateTime.Now.ToString())) alt="Car Front" class="img-fluid col-10" />
         <br />
         <label class="col-10">Back</label>
-        <img src=@("../Images/Before/" + Model.BeforeTripBackImage +"?=" + DateTime.Now.ToString()) alt="Car Back" class="img-fluid col-10" />
+        <img src=@("../Images/Before/" + Model.BeforeTripBackImage +"?=" + Uri.EscapeDataString(DateTime.Now.ToString())) alt="Car Back" class="img-fluid col-10" />
         <br />
         <label class="col-10">Left</label>
-        <img src=@("../Images/Before/" + Model.BeforeTripLeftImage +"?=" + DateTime.Now.ToString()) alt="Car Left" class="img-fluid col-10" />
+        <img src=@("../Images/Before/" + Model.BeforeTripLeftImage +"?=" + Uri.EscapeDataString(DateTime.Now.ToString())) alt="Car Left" class="img-fluid col-10" />
         <br />
         <label class="col-10">Right</label>
-        <img src=@("../Images/Before/" + Model.BeforeTripRightImage +"?=" + DateTime.Now.ToString()) alt="Car Right" class="img-fluid col-10" />
+        <img src=@("../Images/Before/" + Model.BeforeTripRightImage +"?=" + Uri.EscapeDataString(DateTime.Now.ToString())) alt="Car Right" class="img-fluid col-10" />
         <br />
         <label class="col-10">Front Interior</label>
-        <img src=@("../Images/Before/" + Model.BeforeTripInteriorFront +"?=" + DateTime.Now.ToString()) alt="Car InteriorFront" class="img-fluid col-10" />
+        <img src=@("../Images/Before/" + Model.BeforeTripInteriorFront +"?=" + Uri.EscapeDataString(DateTime.Now.ToString())) alt="Car InteriorFront" class="img-fluid col-10" />
         <br />
         <label class="col-10">Back Interior</label>
-        <img src=@("../Images/Before/" + Model.BeforeTripInteriorBack +"?=" + DateTime.Now.ToString()) alt="Car InteriorBack" class="img-fluid col-10" />
+        <img src=@("../Images/Before/" + Model.BeforeTripInteriorBack +"?=" + Uri.EscapeDataString(DateTime.Now.ToString()))alt="Car InteriorBack" class="img-fluid col-10" />
     </div>
     <div class="col-6">
         <form asp-action="CreateTrip">
