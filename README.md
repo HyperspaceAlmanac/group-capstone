@@ -31,6 +31,6 @@ MY_PHONE_NUMBER = "+1xxxyyyzzzz" (Phone number that Twilio will send text to)
 
 During presentation photos uploaded by customer did not get displayed correctly.
 
-This is due to browser using cached image. AfterPresentation branch made changes to force browser to always grab new images.
+This is due to browser using cached image. AfterPresentation branch made changes to force browser to always grab new images. This has now been merged into main.
 
-Will probably keep on making notes about changes since presentation here.
+Will probably keep on making notes about functionality changes since presentation here.
