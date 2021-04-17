@@ -2,7 +2,7 @@
 
 (function ($) {
     //alert("Hello");
-    if ($("#TripStatus")) {
+    if ($("#TripStatus").length) {
         handleStatus();
     }
 })(jQuery);
@@ -125,22 +125,22 @@ function handleTakePhotos(values) {
     rows.push("<div class='col-6'>");
     rows.push("<div>Before Trip Photo of Front</div>");
     temp = values.beforeTripFrontImage !== "" ? values.beforeTripFrontImage : "FrontDefault.png";
-    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/Before/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("<div>Before Trip Photo of Back</div>");
     temp = values.beforeTripBackImage !== "" ? values.beforeTripBackImage : "BackDefault.png";
-    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/Before/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("<div>Before Trip Photo of Left</div>");
     temp = values.beforeTripLeftImage !== "" ? values.beforeTripLeftImage : "LeftDefault.png";
-    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/Before/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("<div>Before Trip Photo of Right</div>");
     temp = values.beforeTripRightImage !== "" ? values.beforeTripRightImage : "RightDefault.png";
-    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/Before/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("<div>Before Trip Photo of Front Interior</div>");
     temp = values.beforeTripInteriorFront !== "" ? values.beforeTripInteriorFront : "InteriorFrontDefault.png";
-    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/Before/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("<div>Before Trip Photo of Back Interior</div>");
     temp = values.beforeTripInteriorBack !== "" ? values.beforeTripInteriorBack : "InteriorBackDefault.png";
-    rows.push(`<img src='../Images/Before/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/Before/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("</div>");
     rows.push(`<div class='col-6'>`);
 
@@ -154,7 +154,7 @@ function handleTakePhotos(values) {
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
     rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
     rows.push("</form>");
-    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/After/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("<div>Photo of Back of Vehicle</div>");
     temp = values.afterTripBackImage !== "" ? values.afterTripBackImage : "BackDefault.png";
     photoType = "back";
@@ -163,7 +163,7 @@ function handleTakePhotos(values) {
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
     rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
     rows.push("</form>");
-    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/After/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("<div>Photo of Left Side of Vehicle</div>");
     temp = values.afterTripLeftImage !== "" ? values.afterTripLeftImage : "LeftDefault.png";
     photoType = "left";
@@ -172,7 +172,7 @@ function handleTakePhotos(values) {
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
     rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
     rows.push("</form>");
-    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/After/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("<div>Photo of Right Side of Vehicle</div>");
     temp = values.afterTripRightImage !== "" ? values.afterTripRightImage : "RightDefault.png";
     photoType = "right";
@@ -181,7 +181,7 @@ function handleTakePhotos(values) {
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
     rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
     rows.push("</form>");
-    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/After/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("<div>Photo of Front Interior of Vehicle</div>");
     temp = values.afterTripInteriorFront !== "" ? values.afterTripInteriorFront : "InteriorFrontDefault.png";
     photoType = "interiorFront";
@@ -190,7 +190,7 @@ function handleTakePhotos(values) {
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
     rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
     rows.push("</form>");
-    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/After/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("<div>Photo of Back Interior of Vehicle</div>");
     temp = values.afterTripInteriorBack !== "" ? values.afterTripInteriorBack : "InteriorBackDefault.png";
     photoType = "interiorBack";
@@ -199,7 +199,7 @@ function handleTakePhotos(values) {
     rows.push(`<input type="file" id="myFile-${photoType}" accept="image/x-png" name="file" />`);
     rows.push("<button type='submit' class='btn btn-info'>Upload Image</button>");
     rows.push("</form>");
-    rows.push(`<img src='../Images/After/${temp}' alt='Default gray image' class='img-fluid'>`);
+    rows.push(`<img src='../Images/After/${temp}?=${Date($.now())}' alt='Default gray image' class='img-fluid'>`);
     rows.push("</div>");
     rows.push("</div>");
 
